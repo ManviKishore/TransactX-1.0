@@ -1,15 +1,47 @@
 var config = require("./dbConfig");
 const sql = require("mssql");
-async function getOrders() {
+const person = require("./pojo/person");
+async function getPerson() {
   try {
     console.log("trying to connect");
     let pool = await sql.connect(config);
 
-    let products = await pool.request().query("SELECT * from Admin");
-    console.log(products.recordsets);
-    return products.recordsets;
+    let persons = await pool.request().query("SELECT * from Admin");
+    console.log(persons.recordsets);
+    return persons.recordsets;
   } catch (error) {
     console.log(error);
   }
 }
-getOrders();
+async function getPerson(ssn) {
+  try {
+    let pool = await sql.connect(config);
+    let person = await pool
+      .request()
+      .input("input_parameter", sql.Int, ssn)
+      .query("SELECT * from Person where SSN = @input_parameter");
+    console.log(person);
+    return person.recordsets;
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function addPerson(person) {
+  try {
+    let pool = await sql.connect(config);
+    let insertPerson = await pool
+      .request()
+      .input("SSN", sql.Int, person.ssn)
+      .input("Firstname", sql.NVarChar, person.Firstname)
+      .input("Lastname", sql.Int, person.Lastname)
+      .input("StreetAddress", sql.NVarChar, person.StreetAddress)
+      .input("City", sql.NVarChar, person.City)
+      .input("State", sql.NVarChar, person.State)
+      .execute("InsertPerson");
+    return insertPerson.recordsets;
+  } catch (err) {
+    console.log(err);
+  }
+}
+getPerson();
+//getPerson(12345);
