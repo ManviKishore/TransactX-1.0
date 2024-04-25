@@ -18,6 +18,7 @@
 import React from "react";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
+import { IoNotificationsOutline } from "react-icons/io5";
 
 // reactstrap components
 import {
@@ -67,8 +68,8 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">User Accounts</h5>
-                <CardTitle tag="h4">Number of Accounts</CardTitle>
+                <h5 className="card-category">Payments</h5>
+                <CardTitle tag="h4">Late Payments</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
@@ -77,9 +78,9 @@ function Dashboard() {
                     <i className="now-ui-icons loader_gear" />
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem>Action</DropdownItem>
-                    <DropdownItem>Another Action</DropdownItem>
-                    <DropdownItem>Something else here</DropdownItem>
+                    <DropdownItem>View Customers</DropdownItem>
+                    <DropdownItem>Change Period</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
                     <DropdownItem className="text-danger">
                       Remove data
                     </DropdownItem>
@@ -115,9 +116,9 @@ function Dashboard() {
                     <i className="now-ui-icons loader_gear" />
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem>Action</DropdownItem>
-                    <DropdownItem>Another Action</DropdownItem>
-                    <DropdownItem>Something else here</DropdownItem>
+                    <DropdownItem>Change Year</DropdownItem>
+                    <DropdownItem>Add</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
                     <DropdownItem className="text-danger">
                       Remove data
                     </DropdownItem>
@@ -143,8 +144,8 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Email Statistics</h5>
-                <CardTitle tag="h4">24 Hours Performance</CardTitle>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
@@ -166,8 +167,8 @@ function Dashboard() {
           <Col xs={12} md={6}>
             <Card className="card-tasks">
               <CardHeader>
-                <h5 className="card-category">Backend Development</h5>
-                <CardTitle tag="h4">Tasks</CardTitle>
+                <h5 className="card-category"> <IoNotificationsOutline /> </h5>
+                <CardTitle tag="h4">Notifications</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="table-full-width table-responsive">
@@ -175,16 +176,15 @@ function Dashboard() {
                     <tbody>
                       <tr>
                         <td>
-                          <FormGroup check>
+                          {/* <FormGroup check>
                             <Label check>
                               <Input defaultChecked type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
-                          </FormGroup>
+                          </FormGroup> */}
                         </td>
                         <td className="text-left">
-                          Sign contract for "What are conference organizers
-                          afraid of?"
+                          Pending transactions exceeded threshold.
                         </td>
                         <td className="td-actions text-right">
                           <Button
@@ -199,7 +199,7 @@ function Dashboard() {
                             delay={0}
                             target="tooltip731609871"
                           >
-                            Edit Task
+                            View
                           </UncontrolledTooltip>
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -219,12 +219,12 @@ function Dashboard() {
                       </tr>
                       <tr>
                         <td>
-                          <FormGroup check>
+                          {/* <FormGroup check>
                             <Label check>
                               <Input type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
-                          </FormGroup>
+                          </FormGroup> */}
                         </td>
                         <td className="text-left">
                           Lines From Great Russian Literature? Or E-mails From
@@ -243,7 +243,7 @@ function Dashboard() {
                             delay={0}
                             target="tooltip907509347"
                           >
-                            Edit Task
+                            View
                           </UncontrolledTooltip>
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -263,12 +263,12 @@ function Dashboard() {
                       </tr>
                       <tr>
                         <td>
-                          <FormGroup check>
+                          {/* <FormGroup check>
                             <Label check>
                               <Input defaultChecked type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
-                          </FormGroup>
+                          </FormGroup> */}
                         </td>
                         <td className="text-left">
                           Flooded: One year later, assessing what was lost and
@@ -288,7 +288,7 @@ function Dashboard() {
                             delay={0}
                             target="tooltip326247652"
                           >
-                            Edit Task
+                            View
                           </UncontrolledTooltip>
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -322,8 +322,8 @@ function Dashboard() {
           <Col xs={12} md={6}>
             <Card>
               <CardHeader>
-                <h5 className="card-category">All Persons List</h5>
-                <CardTitle tag="h4">Employees Stats</CardTitle>
+                {/* <h5 className="card-category"></h5> */}
+                <CardTitle tag="h4">User Demographics</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
