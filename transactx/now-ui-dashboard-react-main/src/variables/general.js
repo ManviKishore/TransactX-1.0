@@ -38,7 +38,15 @@ const tasks = [
 // // // table head data and table body data for Tables view
 // #############################
 
-const thead = ["Name", "Country", "City", "Salary"];
+const theadCustomer = ["SSN", "AccountNo", "Username", "Password"];
+const filterInputCust = ["SSN", "AccountNo", "Username"];
+const theadCrditCard = [
+  "CardNumber",
+  "AccountNo",
+  "CardType",
+  "Annual % Rate",
+  "Interest Late Payment",
+];
 const tbody = [
   {
     className: "table-success",
@@ -70,4 +78,4 @@ const tbody = [
 // tasks list for Tasks card in Dashboard view
 // data for <thead> of table in TableList view
 // data for <tbody> of table in TableList view
-export { tasks, thead, tbody };
+export { tasks, theadCustomer, theadCrditCard, tbody, filterInputCust };
