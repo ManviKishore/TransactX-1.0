@@ -8,23 +8,32 @@ import {
   Row,
   Col,
   Button,
-  Input
+  Input,
 } from "reactstrap";
 
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
-import { thead, tbody } from "variables/general";
+import {
+  theadCrditCard,
+  theadCustomer,
+  tbody,
+  filterInputCust,
+} from "variables/general";
 
 function RegularTables() {
-  const [tableData, setTableData] = useState(tbody);
-  const [filterText, setFilterText] = useState(Array(thead.length).fill(""));
-  const [selectedTableName, setSelectedTableName] = useState("Table 1");
+  //actual table data can be used here.
+  const [tableData, setTableData] = useState(theadCustomer);
+
+  const [filterText, setFilterText] = useState(
+    Array(theadCustomer.length).fill("")
+  );
+  const [selectedTableName, setSelectedTableName] = useState("Customer");
 
   const handleInputChange = (event, rowIndex, colIndex) => {
     const { value } = event.target;
     const updatedTableData = [...tableData];
     updatedTableData[rowIndex].data[colIndex] = value;
     // Add Salary column value for Table 1
-    if (selectedTableName === "Table 1" && colIndex === 3) {
+    if (selectedTableName === "Customer" && colIndex === 3) {
       // 3 is the index of the Salary column in Table 1
       updatedTableData[rowIndex].data[3] = value;
     }
@@ -36,14 +45,14 @@ function RegularTables() {
     const newFilterText = [...filterText];
     newFilterText[colIndex] = value;
     setFilterText(newFilterText);
-    const filteredData = tbody.filter(
-      (row) => row.data[colIndex].toLowerCase().includes(value.toLowerCase())
+    const filteredData = tbody.filter((row) =>
+      row.data[colIndex].toLowerCase().includes(value.toLowerCase())
     );
     setTableData(filteredData);
   };
 
   const handleAddRow = () => {
-    const newRow = { data: Array(thead.length).fill("") };
+    const newRow = { data: Array(theadCustomer.length).fill("") };
     setTableData([...tableData, newRow]);
   };
 
@@ -55,17 +64,11 @@ function RegularTables() {
   const handleTableSelect = (tableName) => {
     setSelectedTableName(tableName);
     // Reset filter and table data when switching tables
-    setFilterText(Array(thead.length).fill(""));
-    if (tableName === "Table 1") {
-      setTableData(tbody);
-    } else {
-      // Exclude Salary column for Table 2
-      const tableDataWithoutSalary = tbody.map(row => {
-        const data = [...row.data];
-        data.splice(3, 1);
-        return { data };
-      });
-      setTableData(tableDataWithoutSalary);
+    setFilterText(Array(theadCustomer.length).fill(""));
+    if (tableName === "Customer") {
+      setTableData(theadCustomer);
+    } else if (tableName == "CreditCard") {
+      setTableData(theadCrditCard);
     }
   };
 
@@ -83,68 +86,73 @@ function RegularTables() {
                 <div className="table-switch">
                   <Button
                     color="info"
-                    onClick={() => handleTableSelect("Table 1")}
-                    active={selectedTableName === "Table 1"}
+                    onClick={() => handleTableSelect("Customer")}
+                    active={selectedTableName === "Customer"}
                   >
-                    Table 1
+                    Customer
                   </Button>
                   <Button
                     color="info"
-                    onClick={() => handleTableSelect("Table 2")}
-                    active={selectedTableName === "Table 2"}
+                    onClick={() => handleTableSelect("CreditCard")}
+                    active={selectedTableName === "CreditCard"}
                   >
-                    Table 2
+                    Credit Card
                   </Button>
                   {/* Add more buttons for additional tables */}
                 </div>
                 <div className="filter-inputs">
-                  {thead.map((col, colIndex) => (
-                    <Input
-                      key={colIndex}
-                      type="text"
-                      value={filterText[colIndex]}
-                      placeholder={`Filter by ${col}`}
-                      onChange={(event) => handleFilterChange(event, colIndex)}
-                    />
-                  ))}
+                  {selectedTableName === "Customer" &&
+                    filterInputCust.map((col, colIndex) => (
+                      <Input
+                        key={colIndex}
+                        type="text"
+                        value={filterText[colIndex]}
+                        placeholder={`Filter by ${col}`}
+                        onChange={(event) =>
+                          handleFilterChange(event, colIndex)
+                        }
+                      />
+                    ))}
+                  {selectedTableName === "CreditCard" &&
+                    theadCrditCard.map((col, colIndex) => (
+                      <Input
+                        key={colIndex}
+                        type="text"
+                        value={filterText[colIndex]}
+                        placeholder={`Filter by ${col}`}
+                        onChange={(event) =>
+                          handleFilterChange(event, colIndex)
+                        }
+                      />
+                    ))}
                 </div>
                 <Table responsive>
                   <thead className="text-primary">
-                    <tr>
-                      {selectedTableName === "Table 1" &&
-                        thead.map((prop, key) => (
+                    <tr style={{ fontSize: "0.8rem" }}>
+                      {selectedTableName === "Customer" &&
+                        theadCustomer.map((prop, key) => (
                           <th key={key}>{prop}</th>
                         ))}
-                      {selectedTableName === "Table 2" &&
-                        thead
-                          .filter((prop) => prop !== "Salary")
-                          .map((prop, key) => <th key={key}>{prop}</th>)}
+                      {selectedTableName === "CreditCard" &&
+                        theadCrditCard.map((prop, key) => (
+                          <th key={key}>{prop}</th>
+                        ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {tableData.map((row, rowIndex) => (
-                      <tr key={rowIndex}>
-                        {row.data.map(
-                          (cell, colIndex) =>
-                            (selectedTableName === "Table 1" ||
-                              thead[colIndex] !== "Salary") && (
-                              <td key={colIndex}>
-                                <input
-                                  type="text"
-                                  value={cell}
-                                  onChange={(event) =>
-                                    handleInputChange(
-                                      event,
-                                      rowIndex,
-                                      colIndex
-                                    )
-                                  }
-                                />
-                              </td>
-                            )
-                        )}
-                      </tr>
-                    ))}
+                    <tr style={{ fontSize: "0.7rem", paddingLeft: "0.2rem" }}>
+                      {tableData.map((prop, key) => (
+                        <td key={key}>
+                          <input
+                            type="text"
+                            value={prop}
+                            // onChange={(event) =>
+                            //   handleInputChange(event, rowIndex, key)
+                            // }
+                          />
+                        </td>
+                      ))}
+                    </tr>
                   </tbody>
                 </Table>
                 <Button color="primary" onClick={handleAddRow}>
