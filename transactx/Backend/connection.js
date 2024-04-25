@@ -1,18 +1,18 @@
 var config = require("./dbConfig");
 const sql = require("mssql");
 const person = require("./pojo/person");
-async function getPerson() {
-  try {
-    console.log("trying to connect");
-    let pool = await sql.connect(config);
+// async function getPerson() {
+//   try {
+//     console.log("trying to connect");
+//     let pool = await sql.connect(config);
 
-    let persons = await pool.request().query("SELECT * from Admin");
-    console.log(persons.recordsets);
-    return persons.recordsets;
-  } catch (error) {
-    console.log(error);
-  }
-}
+//     let persons = await pool.request().query("SELECT * from Admin");
+//     console.log(persons.recordsets);
+//     return persons.recordsets;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 async function getPerson(ssn) {
   try {
     let pool = await sql.connect(config);
@@ -43,5 +43,5 @@ async function addPerson(person) {
     console.log(err);
   }
 }
-getPerson();
-//getPerson(12345);
+//getPerson();
+getPerson(12345);
