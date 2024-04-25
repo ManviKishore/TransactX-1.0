@@ -67,8 +67,8 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Global Sales</h5>
-                <CardTitle tag="h4">Shipped Products</CardTitle>
+                <h5 className="card-category">User Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
@@ -105,8 +105,8 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">2021 Sales</h5>
-                <CardTitle tag="h4">All products</CardTitle>
+                <h5 className="card-category">Transactions</h5>
+                <CardTitle tag="h4">Transactions Per Card</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
