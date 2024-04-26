@@ -61,7 +61,9 @@ function Dashboard() {
     Username: "",
     Password: "",
     AccountNumber: ""
-  });
+  }); 
+
+  const [customers, setCustomers] = React.useState([]);
 
   const handleInputChange = (e) => {
    setData({ 
@@ -106,8 +108,9 @@ function Dashboard() {
   //get the active customers
   const getCustomers = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/tableops");
-      console.log(response.data);
+      const response = await axios.get("http://localhost:4000/customer");
+      console.log(response.data.results);
+      setCustomers(response.data.results);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -118,7 +121,7 @@ function Dashboard() {
   }, []);
 
 
-
+  
   
 
 
