@@ -15,10 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect } from "react";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 import { IoNotificationsOutline } from "react-icons/io5";
+import axios from 'axios';  
 
 // reactstrap components
 import {
@@ -52,6 +53,77 @@ import {
 } from "variables/charts.js";
 
 function Dashboard() {
+
+  const [data, setData] = React.useState({
+    Tablename: "",
+    Operation: "",
+    SSN: "",
+    Username: "",
+    Password: "",
+    AccountNumber: ""
+  });
+
+  const handleInputChange = (e) => {
+   setData({ 
+    ...data, 
+    [e.target.name]: e.target.value });
+  };
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const postData = {
+        Tablename: data.Tablename,
+        Operation: data.Operation,
+        SSN: data.SSN,
+        Username: data.Username,
+        Password: data.Password,
+        AccountNumber: data.AccountNumber
+      };
+      console.log(postData);
+    setData(postData);
+    const response = await fetch("http://localhost:4000/tableops", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch');
+    }
+
+    const responseData = await response.json();
+
+    console.log(responseData);
+    
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+  //get the active customers
+  const getCustomers = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/tableops");
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    getCustomers();
+  }, []);
+
+
+
+  
+
+
+
+
   return (
     <>
       <PanelHeader
@@ -165,6 +237,109 @@ function Dashboard() {
         </Row>
         <Row>
           <Col xs={12} md={6}>
+            <Card>
+              <CardHeader>
+                <h5 className="card-category">Customer Table</h5>
+              </CardHeader>
+
+              <CardBody>
+                <form onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Label for="Tablename">Table Name</Label>
+                    <Input
+                      type="select"
+                      name="Tablename"
+                      id="tablename"
+                      value={data.Tablename}
+                      onChange={handleInputChange}
+                      >
+                      <option value=" ">Select table name</option>
+                      <option value="Customer">Customer</option>
+                      <option value="Account">Account</option>
+                      
+                      </Input>
+                    
+                  </FormGroup>
+                  
+                  {/* Add a select */} 
+                  <FormGroup>
+                    <Label for="Operation">Operation</Label>
+                    <Input
+                      type="select"
+                      name="Operation"
+                      id="operation"
+                      value={data.Operation}
+                      onChange={handleInputChange}
+                    >
+                      <option value=" ">Select operation</option>
+                      <option value="Add">Add</option>
+                      <option value="Update">Update</option>
+                      <option value="Delete">Delete</option>
+                    </Input> 
+                      
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="SSN">Customer SSN</Label>
+                    <Input
+                      type="text"
+                      name="SSN"
+                      id="ssn"
+                      placeholder="Enter Customer SSN"
+                      value={data.SSN}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="Username">Username</Label>
+                    <Input
+                      type="text"
+                      name="Username"
+                      id="username"
+                      placeholder="Enter Customer Username"
+                      value={data.Name}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="Password">Initial Password</Label>
+                    <Input
+                      type="text"
+                      name="Password"
+                      id="password"
+                      placeholder="Enter Customer Password"
+                      value={data.Password}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="AccountNumber">Account Number</Label>
+                    <Input
+                      type="text"
+                      name="AccountNumber"
+                      id="condition"
+                      placeholder="Account Number"
+                      value={data.AccountNumber}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+
+
+                  <Button>Add Customer</Button>
+                </form>
+                {/* <Table responsive> */}
+                </CardBody>
+
+            </Card>
+          </Col>
+
+
+        </Row>
+
+        
+        <Row>
+          <Col xs={12} md={6}>
             <Card className="card-tasks">
               <CardHeader>
                 <h5 className="card-category"> <IoNotificationsOutline /> </h5>
@@ -221,14 +396,56 @@ function Dashboard() {
                         <td>
                           {/* <FormGroup check>
                             <Label check>
+                              <Input defaultChecked type="checkbox" />
+                              <span className="form-check-sign" />
+                            </Label>
+                          </FormGroup> */}
+                        </td>
+                        <td className="text-left">
+                          Late payments detected.
+                        </td>
+                        <td className="td-actions text-right">
+                          <Button
+                            className="btn-round btn-icon btn-icon-mini btn-neutral"
+                            color="info"
+                            id="tooltip731609871"
+                            type="button"
+                          >
+                            <i className="now-ui-icons ui-2_settings-90" />
+                          </Button>
+                          <UncontrolledTooltip
+                            delay={0}
+                            target="tooltip731609871"
+                          >
+                            View
+                          </UncontrolledTooltip>
+                          <Button
+                            className="btn-round btn-icon btn-icon-mini btn-neutral"
+                            color="danger"
+                            id="tooltip923217206"
+                            type="button"
+                          >
+                            <i className="now-ui-icons ui-1_simple-remove" />
+                          </Button>
+                          <UncontrolledTooltip
+                            delay={0}
+                            target="tooltip923217206"
+                          >
+                            Remove
+                          </UncontrolledTooltip>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          {/* <FormGroup check>
+                            <Label check>
                               <Input type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
                           </FormGroup> */}
                         </td>
                         <td className="text-left">
-                          Lines From Great Russian Literature? Or E-mails From
-                          My Boss?
+                         New transactions made
                         </td>
                         <td className="td-actions text-right">
                           <Button
@@ -271,9 +488,7 @@ function Dashboard() {
                           </FormGroup> */}
                         </td>
                         <td className="text-left">
-                          Flooded: One year later, assessing what was lost and
-                          what was found when a ravaging rain swept through
-                          metro Detroit
+                          User card added
                         </td>
                         <td className="td-actions text-right">
                           <Button

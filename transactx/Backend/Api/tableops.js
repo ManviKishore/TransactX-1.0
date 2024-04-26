@@ -26,4 +26,17 @@ router.post('/tableops', async (req, res) => {
   }
 });
 
+// GET request handler
+router.get('/tableops', async (req, res) => {
+  try {
+    // Handle GET request logic here
+    
+    res.status(200).json({ message: 'GET request handled successfully' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 module.exports = router;
