@@ -28,6 +28,7 @@ function RegularTables() {
   );
   const [selectedTableName, setSelectedTableName] = useState("Customer");
 
+
   const handleInputChange = (event, rowIndex, colIndex) => {
     const { value } = event.target;
     const updatedTableData = [...tableData];
@@ -39,6 +40,18 @@ function RegularTables() {
     }
     setTableData(updatedTableData);
   };
+
+
+    //get the data from the API and display it in the table
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const response = await axios.post("http://localhost:4000/tableops", {
+      // pass the data to the API
+    });
+    console.log(response.data);
+    setData(response.data.results);
+  };
+
 
   const handleFilterChange = (event, colIndex) => {
     const { value } = event.target;
@@ -80,7 +93,7 @@ function RegularTables() {
           <Col xs={12}>
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Editable Tables</CardTitle>
+                <CardTitle tag="h4">Add Customer Details</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="table-switch">
@@ -146,9 +159,9 @@ function RegularTables() {
                           <input
                             type="text"
                             value={prop}
-                            // onChange={(event) =>
-                            //   handleInputChange(event, rowIndex, key)
-                            // }
+                            onChange={(event) =>
+                              handleInputChange(event, rowIndex, key)
+                            }
                           />
                         </td>
                       ))}
