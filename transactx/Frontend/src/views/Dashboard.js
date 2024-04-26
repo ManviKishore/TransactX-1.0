@@ -52,6 +52,8 @@ import {
   dashboard24HoursPerformanceChart,
 } from "variables/charts.js";
 
+import ViewCustomers from "variables/ViewCustomers";
+
 function Dashboard() {
 
   const [data, setData] = React.useState({
@@ -61,7 +63,9 @@ function Dashboard() {
     Username: "",
     Password: "",
     AccountNumber: ""
-  });
+  }); 
+
+  const [customers, setCustomers] = React.useState([]);
 
   const handleInputChange = (e) => {
    setData({ 
@@ -106,8 +110,10 @@ function Dashboard() {
   //get the active customers
   const getCustomers = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/tableops");
-      console.log(response.data);
+      const response = await axios.get("http://localhost:4000/customer");
+      console.log(response.data.results[0][0].age);
+      setCustomers(response.data.results[0]);
+      
     } catch (error) {
       console.error('Error:', error);
     }
@@ -115,10 +121,11 @@ function Dashboard() {
 
   useEffect(() => {
     getCustomers();
+    console.log(customers[0]);
   }, []);
 
 
-
+  
   
 
 
@@ -538,18 +545,24 @@ function Dashboard() {
             <Card>
               <CardHeader>
                 {/* <h5 className="card-category"></h5> */}
-                <CardTitle tag="h4">User Demographics</CardTitle>
+                <CardTitle tag="h4">Cards</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-right">Salary</th>
+                      <th>Firstname</th>
+                      {/* <th>Lastname</th> */}
+                      <th>Address</th>
+                      <th>Age</th>
+                      {/* <th>Gender</th> */}
+                      <th className="text-right">Income</th>
+                      {/* <th>SSN</th>
+                      <th>Username</th>
+                      <th>AccountNumber</th> */}
                     </tr>
                   </thead>
+                  
                   <tbody>
                     <tr>
                       <td>Dakota Rice</td>
@@ -575,13 +588,42 @@ function Dashboard() {
                       <td>Feldkirchen in Kärnten</td>
                       <td className="text-right">$63,542</td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td>Mason Porter</td>
                       <td>Chile</td>
                       <td>Gloucester</td>
                       <td className="text-right">$78,615</td>
-                    </tr>
+                    </tr> */}
                   </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+        <Col xs={12} md={12}>
+            <Card>
+              <CardHeader>
+                {/* <h5 className="card-category"></h5> */}
+                <CardTitle tag="h4">Customer Details</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Firstname</th>
+                      <th>Lastname</th>
+                      <th>Age</th>
+                      <th>Address</th>
+                      <th className="text-right">Income</th>
+                      <th>SSN</th>
+                      <th>Gender</th>
+                      <th>Username</th>
+                      <th>AccountNumber</th>
+                    </tr>
+                  </thead>
+                  <ViewCustomers customers={customers} />
+                  
                 </Table>
               </CardBody>
             </Card>

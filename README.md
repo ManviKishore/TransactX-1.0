@@ -8,8 +8,9 @@
 - Payment Status per Location
 - People with Low Payment Status
 - View Income
-  
+
 ### Other operations
+
 - Update credit card number if user gets a new one (replacement)
 - Add credit card number to an account
 - Delete users with no credit cards
