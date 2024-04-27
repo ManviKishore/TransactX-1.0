@@ -1,22 +1,5 @@
 var config = require("./dbConfig");
 const sql = require("mssql");
-<<<<<<< HEAD:transactx/now-ui-dashboard-react-main/src/database/connection.js
-// const person = require("./pojo/person");
-async function getPerson() {
-  try {
-    console.log("trying to connect");
-    let pool = await sql.connect(config);
-
-    let persons = await pool.request().query("SELECT * from Person");
-    console.log(persons);
-    return persons.recordsets;
-  } catch (error) {
-    console.log(error);
-  }
-}
-getPerson();
-
-=======
 const person = require("./pojo/person");
 // async function getPerson() {
 //   try {
@@ -30,7 +13,6 @@ const person = require("./pojo/person");
 //     console.log(error);
 //   }
 // }
->>>>>>> e0d66e0535496494f436a0d2664731a05a2be68d:transactx/Backend/connection.js
 async function getPerson(ssn) {
   try {
     let pool = await sql.connect(config);
@@ -61,9 +43,5 @@ async function addPerson(person) {
     console.log(err);
   }
 }
-<<<<<<< HEAD:transactx/now-ui-dashboard-react-main/src/database/connection.js
-//getPerson(12345);
-=======
 //getPerson();
 getPerson(12345);
->>>>>>> e0d66e0535496494f436a0d2664731a05a2be68d:transactx/Backend/connection.js

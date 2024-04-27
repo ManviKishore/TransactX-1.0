@@ -17,28 +17,21 @@ import {
   theadCustomer,
   tbody,
   filterInputCust,
+  theadPerson,
 } from "variables/general";
 
 function RegularTables() {
   //actual table data can be used here.
   const [tableData, setTableData] = useState(theadCustomer);
+  const [rowIndex, setRowIndex] = useState(0);
+  const [formData, setFormData] = useState({}); // State to hold form data
+
+  const [userToDelete, setUserToDelete] = useState("");
 
   const [filterText, setFilterText] = useState(
     Array(theadCustomer.length).fill("")
   );
   const [selectedTableName, setSelectedTableName] = useState("Customer");
-
-  const handleInputChange = (event, rowIndex, colIndex) => {
-    const { value } = event.target;
-    const updatedTableData = [...tableData];
-    updatedTableData[rowIndex].data[colIndex] = value;
-    // Add Salary column value for Table 1
-    if (selectedTableName === "Customer" && colIndex === 3) {
-      // 3 is the index of the Salary column in Table 1
-      updatedTableData[rowIndex].data[3] = value;
-    }
-    setTableData(updatedTableData);
-  };
 
   const handleFilterChange = (event, colIndex) => {
     const { value } = event.target;
@@ -49,11 +42,6 @@ function RegularTables() {
       row.data[colIndex].toLowerCase().includes(value.toLowerCase())
     );
     setTableData(filteredData);
-  };
-
-  const handleAddRow = () => {
-    const newRow = { data: Array(theadCustomer.length).fill("") };
-    setTableData([...tableData, newRow]);
   };
 
   const handleSave = () => {
@@ -69,7 +57,13 @@ function RegularTables() {
       setTableData(theadCustomer);
     } else if (tableName == "CreditCard") {
       setTableData(theadCrditCard);
+    } else if (tableName == "Person") {
+      setTableData(theadPerson);
     }
+  };
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    console.log("Form Data:", formData);
   };
 
   return (
@@ -93,11 +87,19 @@ function RegularTables() {
                   </Button>
                   <Button
                     color="info"
+                    onClick={() => handleTableSelect("Person")}
+                    active={selectedTableName === "Person"}
+                  >
+                    Person
+                  </Button>
+                  <Button
+                    color="info"
                     onClick={() => handleTableSelect("CreditCard")}
                     active={selectedTableName === "CreditCard"}
                   >
                     Credit Card
                   </Button>
+
                   {/* Add more buttons for additional tables */}
                 </div>
                 <div className="filter-inputs">
@@ -125,6 +127,18 @@ function RegularTables() {
                         }
                       />
                     ))}
+                  {selectedTableName === "Person" &&
+                    theadPerson.map((col, colIndex) => (
+                      <Input
+                        key={colIndex}
+                        type="text"
+                        value={filterText[colIndex]}
+                        placeholder={`Filter by ${col}`}
+                        onChange={(event) =>
+                          handleFilterChange(event, colIndex)
+                        }
+                      />
+                    ))}
                 </div>
                 <Table responsive>
                   <thead className="text-primary">
@@ -137,31 +151,66 @@ function RegularTables() {
                         theadCrditCard.map((prop, key) => (
                           <th key={key}>{prop}</th>
                         ))}
+                      {selectedTableName === "Person" &&
+                        theadPerson.map((prop, key) => (
+                          <th key={key}>{prop}</th>
+                        ))}
                     </tr>
                   </thead>
                   <tbody>
-                    <tr style={{ fontSize: "0.7rem", paddingLeft: "0.2rem" }}>
-                      {tableData.map((prop, key) => (
-                        <td key={key}>
-                          <input
-                            type="text"
-                            value={prop}
-                            // onChange={(event) =>
-                            //   handleInputChange(event, rowIndex, key)
-                            // }
-                          />
-                        </td>
-                      ))}
-                    </tr>
+                    <form onSubmit={handleFormSubmit}>
+                      {/* Form starts here */}
+
+                      {/* <form onSubmit={handleFormSubmit}> */}
+                      <tr key={rowIndex} style={{ fontSize: "0.7rem" }}>
+                        {rowData.map((prop, colIndex) => (
+                          <td key={colIndex}>
+                            <input
+                              type="text"
+                              name={`row-${rowIndex}-col-${colIndex}`} // Unique name for each input
+                              value={
+                                formData[`row-${rowIndex}-col-${colIndex}`] ||
+                                prop
+                              } // Use form data if available, otherwise use initial value
+                              onChange={(event) =>
+                                handleInputChange(event, rowIndex, colIndex)
+                              }
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    </form>
                   </tbody>
                 </Table>
-                <Button color="primary" onClick={handleAddRow}>
-                  Add Row
-                </Button>
-                <Button color="primary" onClick={handleSave}>
+                <Button type="submit" color="primary" onClick={handleSave}>
                   Save
                 </Button>
               </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+      <p></p>
+      <div className="content">
+        <Row>
+          <Col xs={12}>
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">
+                  <h4>Delete Users </h4> <h6> (with no credit cards)</h6>
+                </CardTitle>
+
+                <Input
+                  type="text"
+                  value={userToDelete}
+                  placeholder={`Enter SSN`}
+                  // onChange={(event) => handleFilterChange(event, colIndex)}
+                />
+              </CardHeader>
+              <Button color="primary" style={{ marginLeft: "1rem" }}>
+                Delete
+              </Button>
+              <CardBody></CardBody>
             </Card>
           </Col>
         </Row>
