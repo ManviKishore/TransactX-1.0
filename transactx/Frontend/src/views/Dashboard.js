@@ -53,6 +53,9 @@ import {
 } from "variables/charts.js";
 
 import ViewCustomers from "variables/ViewCustomers";
+import ViewCards from "variables/ViewCards";
+import { dashboardMonthPerformanceChart } from "variables/charts";
+import Freq from "variables/Freq";
 
 function Dashboard() {
 
@@ -111,7 +114,7 @@ function Dashboard() {
   const getCustomers = async () => {
     try {
       const response = await axios.get("http://localhost:4000/customer");
-      console.log(response.data.results[0][0].age);
+      // console.log(response.data.results[0][0].age);
       setCustomers(response.data.results[0]);
       
     } catch (error) {
@@ -121,13 +124,47 @@ function Dashboard() {
 
   useEffect(() => {
     getCustomers();
-    console.log(customers[0]);
+    // console.log(customers[0]);
   }, []);
 
-
+  const [cards, setCards] = React.useState([]);
+  const getCards = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/creditcard");
+      // console.log(response.data.results[0]);
+      setCards(response.data.results[0]);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   
-  
+  useEffect(() => {
+    getCards();
+    // console.log(cards[0]);
+  }, []);
 
+  const [openAccounts, setOpenAccounts] = React.useState([]); 
+  const [closedAccounts, setClosedAccounts] = React.useState([]);
+    
+  useEffect(() => {
+    const getClosedbyDate = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/byclosedate");
+        // console.log(response.data.results[0][1].cnt);
+        // setOpenAccounts(response.data.results[0][0]);
+        const openCount = response.data.results[0][0].cnt;
+        const closedCount = response.data.results[0][1].cnt;
+        setOpenAccounts(openCount);
+        setClosedAccounts(closedCount);
+        
+        
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getClosedbyDate();
+    console.log(openAccounts);
+  }, []);
 
 
 
@@ -220,7 +257,7 @@ function Dashboard() {
               </CardFooter>
             </Card>
           </Col>
-          <Col xs={12} md={4}>
+          {/* <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Accounts</h5>
@@ -237,6 +274,32 @@ function Dashboard() {
               <CardFooter>
                 <div className="stats">
                   <i className="now-ui-icons ui-2_time-alarm" /> Last 7 days
+                </div>
+              </CardFooter>
+            </Card>
+          </Col> */}
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Freq 
+                    open={openAccounts}
+                    closed={closedAccounts}
+
+                  />
+                  {/* <Bar
+                    data={dashboardMonthPerformanceChart.aggregatedData}
+                    options={dashboardMonthPerformanceChart.options}
+                  /> */}
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last Year
                 </div>
               </CardFooter>
             </Card>
@@ -601,6 +664,25 @@ function Dashboard() {
           </Col>
         </Row>
         <Row>
+
+          <Col xs={12} md={12}>
+            <Card>
+              <CardHeader> <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Cards</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                    <ViewCards cards={cards} />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+                    
+        </Row>
+
+
+
+        <Row>
         <Col xs={12} md={12}>
             <Card>
               <CardHeader>
@@ -622,7 +704,9 @@ function Dashboard() {
                       <th>AccountNumber</th>
                     </tr>
                   </thead>
+                  <td>
                   <ViewCustomers customers={customers} />
+                  </td>
                   
                 </Table>
               </CardBody>
