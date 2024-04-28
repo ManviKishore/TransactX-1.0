@@ -419,89 +419,8 @@ function Dashboard() {
 
 
         <Row>
-          <Col xs={12} md={4}>
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Customers</h5>
-                <CardTitle tag="h4">Customers By State</CardTitle>
-                <UncontrolledDropdown>
-                  <DropdownToggle
-                    className="btn-round btn-outline-default btn-icon"
-                    color="default"
-                  >
-                    <i className="now-ui-icons loader_gear" />
-                  </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem>View Customers</DropdownItem>
-                    <DropdownItem>Change Period</DropdownItem>
-                    {/* <DropdownItem>Something else here</DropdownItem> */}
-                    <DropdownItem className="text-danger">
-                      Remove data
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  {/* <Line
-                    data={dashboardShippedProductsChart.data}
-                    options={dashboardShippedProductsChart.options}
-                  /> */}
-                  <BarChart
-                    labels={state}
-                    data={stateCount}
-                  />
-                </div>
-              </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="now-ui-icons arrows-1_refresh-69" /> Last 1 Year
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col xs={12} md={4}>
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Transactions</h5>
-                <CardTitle tag="h4">Average Monthly Expenses</CardTitle>
-                <UncontrolledDropdown>
-                  <DropdownToggle
-                    className="btn-round btn-outline-default btn-icon"
-                    color="default"
-                  >
-                    <i className="now-ui-icons loader_gear" />
-                  </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem>Change Year</DropdownItem>
-                    <DropdownItem>Add</DropdownItem>
-                    {/* <DropdownItem>Something else here</DropdownItem> */}
-                    <DropdownItem className="text-danger">
-                      Remove data
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  {/* <Line
-                    data={dashboardAllProductsChart.data}
-                    options={dashboardAllProductsChart.options}
-                  /> */}
-                  <LineChart 
-                    labels={avgMonth}
-                    data={avgMonthExpense}
-                  />
-                </div>
-              </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="now-ui-icons arrows-1_refresh-69" /> Just
-                  Updated
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
+          
+          
           {/* <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
@@ -523,32 +442,7 @@ function Dashboard() {
               </CardFooter>
             </Card>
           </Col> */}
-          <Col xs={12} md={4}>
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Customers</h5>
-                <CardTitle tag="h4">Customers by Card Type</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Freq 
-                    open={openAccounts}
-                    closed={closedAccounts}
-
-                  />
-                  {/* <Bar
-                    data={dashboardMonthPerformanceChart.aggregatedData}
-                    options={dashboardMonthPerformanceChart.options}
-                  /> */}
-                </div>
-              </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="now-ui-icons ui-2_time-alarm" /> Last Year
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
+          
         </Row>
 
 
@@ -684,8 +578,9 @@ function Dashboard() {
 
 
         <Row>
-          <Col xs={12} md={6}>
-            <Card>
+          <Col xs={12} md={12}>
+
+            {/* <Card>
               <CardHeader>
                 <h5 className="card-category">Customer Table</h5>
               </CardHeader>
@@ -707,7 +602,6 @@ function Dashboard() {
                     </Input>
                   </FormGroup>
 
-                  {/* Add a select */}
                   <FormGroup>
                     <Label for="Operation">Operation</Label>
                     <Input
@@ -772,9 +666,9 @@ function Dashboard() {
 
                   <Button>Add Customer</Button>
                 </form>
-                {/* <Table responsive> */}
+               
               </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
 
@@ -965,7 +859,8 @@ function Dashboard() {
               <CardFooter>
                 <hr />
                 <div className="stats">
-                  <i className="now-ui-icons loader_refresh spin" /> Updated 3
+                  <i className="now-ui-icons loader_refresh spin" /> 
+                  Updated 3
                   minutes ago
                 </div>
               </CardFooter>
@@ -982,14 +877,9 @@ function Dashboard() {
                   <thead className="text-primary">
                     <tr>
                       <th>Firstname</th>
-                      {/* <th>Lastname</th> */}
                       <th>Address</th>
                       <th>Age</th>
-                      {/* <th>Gender</th> */}
                       <th className="text-right">Income</th>
-                      {/* <th>SSN</th>
-                      <th>Username</th>
-                      <th>AccountNumber</th> */}
                     </tr>
                   </thead>
 
@@ -1018,13 +908,23 @@ function Dashboard() {
                       <td>Feldkirchen in Kärnten</td>
                       <td className="text-right">$63,542</td>
                     </tr>
-                    {/* <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-right">$78,615</td>
-                    </tr> */}
                   </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={12}>
+            <Card>
+              <CardHeader>
+                {" "}
+                <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCards cards={cards} />
                 </Table>
               </CardBody>
             </Card>
