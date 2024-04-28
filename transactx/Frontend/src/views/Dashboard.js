@@ -19,7 +19,7 @@ import React, { useEffect, useState } from "react";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 import { IoNotificationsOutline } from "react-icons/io5";
-import axios from 'axios';  
+import axios from "axios";
 
 // reactstrap components
 import {
@@ -62,24 +62,23 @@ import BarChart from "variables/BarChart";
 import CustFreq from "variables/CustFreq";
 
 function Dashboard() {
-
   const [data, setData] = React.useState({
     Tablename: "",
     Operation: "",
     SSN: "",
     Username: "",
     Password: "",
-    AccountNumber: ""
-  }); 
+    AccountNumber: "",
+  });
 
   const [customers, setCustomers] = React.useState([]);
 
   const handleInputChange = (e) => {
-   setData({ 
-    ...data, 
-    [e.target.name]: e.target.value });
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
   };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -90,29 +89,25 @@ function Dashboard() {
         SSN: data.SSN,
         Username: data.Username,
         Password: data.Password,
-        AccountNumber: data.AccountNumber
+        AccountNumber: data.AccountNumber,
       };
-      console.log(postData);
-    setData(postData);
-    const response = await fetch("http://localhost:4000/tableops", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch');
+      setData(postData);
+      const response = await fetch("http://localhost:4000/tableops", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    const responseData = await response.json();
-
-    console.log(responseData);
-    
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+  };
 
   //get the active customers
   const getCustomers = async () => {
@@ -120,9 +115,8 @@ function Dashboard() {
       const response = await axios.get("http://localhost:4000/customer");
       // console.log(response.data.results[0][0].age);
       setCustomers(response.data.results[0]);
-      
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
@@ -138,18 +132,18 @@ function Dashboard() {
       // console.log(response.data.results[0]);
       setCards(response.data.results[0]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
-  
+
   useEffect(() => {
     getCards();
     // console.log(cards[0]);
   }, []);
 
-  const [openAccounts, setOpenAccounts] = React.useState([]); 
+  const [openAccounts, setOpenAccounts] = React.useState([]);
   const [closedAccounts, setClosedAccounts] = React.useState([]);
-    
+
   useEffect(() => {
     const getClosedbyDate = async () => {
       try {
@@ -407,6 +401,136 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
+                  <Freq open={openAccounts} closed={closedAccounts} />
+                  {/* <Bar
+                    data={dashboardMonthPerformanceChart.aggregatedData}
+                    options={dashboardMonthPerformanceChart.options}
+                  /> */}
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last Year
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+
+
+        <Row>
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Customers</h5>
+                <CardTitle tag="h4">Customers By State</CardTitle>
+                <UncontrolledDropdown>
+                  <DropdownToggle
+                    className="btn-round btn-outline-default btn-icon"
+                    color="default"
+                  >
+                    <i className="now-ui-icons loader_gear" />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>View Customers</DropdownItem>
+                    <DropdownItem>Change Period</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
+                    <DropdownItem className="text-danger">
+                      Remove data
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  {/* <Line
+                    data={dashboardShippedProductsChart.data}
+                    options={dashboardShippedProductsChart.options}
+                  /> */}
+                  <BarChart
+                    labels={state}
+                    data={stateCount}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons arrows-1_refresh-69" /> Last 1 Year
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Transactions</h5>
+                <CardTitle tag="h4">Average Monthly Expenses</CardTitle>
+                <UncontrolledDropdown>
+                  <DropdownToggle
+                    className="btn-round btn-outline-default btn-icon"
+                    color="default"
+                  >
+                    <i className="now-ui-icons loader_gear" />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>Change Year</DropdownItem>
+                    <DropdownItem>Add</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
+                    <DropdownItem className="text-danger">
+                      Remove data
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  {/* <Line
+                    data={dashboardAllProductsChart.data}
+                    options={dashboardAllProductsChart.options}
+                  /> */}
+                  <LineChart 
+                    labels={avgMonth}
+                    data={avgMonthExpense}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons arrows-1_refresh-69" /> Just
+                  Updated
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+          {/* <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={dashboard24HoursPerformanceChart.data}
+                    options={dashboard24HoursPerformanceChart.options}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last 7 days
+                </div>
+              </CardFooter>
+            </Card>
+          </Col> */}
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Customers</h5>
+                <CardTitle tag="h4">Customers by Card Type</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
                   <Freq 
                     open={openAccounts}
                     closed={closedAccounts}
@@ -576,16 +700,14 @@ function Dashboard() {
                       id="tablename"
                       value={data.Tablename}
                       onChange={handleInputChange}
-                      >
+                    >
                       <option value=" ">Select table name</option>
                       <option value="Customer">Customer</option>
                       <option value="Account">Account</option>
-                      
-                      </Input>
-                    
+                    </Input>
                   </FormGroup>
-                  
-                  {/* Add a select */} 
+
+                  {/* Add a select */}
                   <FormGroup>
                     <Label for="Operation">Operation</Label>
                     <Input
@@ -599,8 +721,7 @@ function Dashboard() {
                       <option value="Add">Add</option>
                       <option value="Update">Update</option>
                       <option value="Delete">Delete</option>
-                    </Input> 
-                      
+                    </Input>
                   </FormGroup>
 
                   <FormGroup>
@@ -649,24 +770,22 @@ function Dashboard() {
                     />
                   </FormGroup>
 
-
                   <Button>Add Customer</Button>
                 </form>
                 {/* <Table responsive> */}
-                </CardBody>
-
+              </CardBody>
             </Card>
           </Col>
-
-
         </Row>
 
-        
         <Row>
           <Col xs={12} md={6}>
             <Card className="card-tasks">
               <CardHeader>
-                <h5 className="card-category"> <IoNotificationsOutline /> </h5>
+                <h5 className="card-category">
+                  {" "}
+                  <IoNotificationsOutline />{" "}
+                </h5>
                 <CardTitle tag="h4">Notifications</CardTitle>
               </CardHeader>
               <CardBody>
@@ -725,9 +844,7 @@ function Dashboard() {
                             </Label>
                           </FormGroup> */}
                         </td>
-                        <td className="text-left">
-                          Late payments detected.
-                        </td>
+                        <td className="text-left">Late payments detected.</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -768,9 +885,7 @@ function Dashboard() {
                             </Label>
                           </FormGroup> */}
                         </td>
-                        <td className="text-left">
-                         New transactions made
-                        </td>
+                        <td className="text-left">New transactions made</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -811,9 +926,7 @@ function Dashboard() {
                             </Label>
                           </FormGroup> */}
                         </td>
-                        <td className="text-left">
-                          User card added
-                        </td>
+                        <td className="text-left">User card added</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -879,7 +992,7 @@ function Dashboard() {
                       <th>AccountNumber</th> */}
                     </tr>
                   </thead>
-                  
+
                   <tbody>
                     <tr>
                       <td>Dakota Rice</td>
@@ -918,26 +1031,24 @@ function Dashboard() {
           </Col>
         </Row>
         <Row>
-
           <Col xs={12} md={12}>
             <Card>
-              <CardHeader> <h5 className="card-category"></h5>
+              <CardHeader>
+                {" "}
+                <h5 className="card-category"></h5>
                 <CardTitle tag="h4">Cards</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
-                    <ViewCards cards={cards} />
+                  <ViewCards cards={cards} />
                 </Table>
               </CardBody>
             </Card>
           </Col>
-                    
         </Row>
 
-
-
         <Row>
-        <Col xs={12} md={12}>
+          <Col xs={12} md={12}>
             <Card>
               <CardHeader>
                 {/* <h5 className="card-category"></h5> */}
@@ -959,9 +1070,8 @@ function Dashboard() {
                     </tr>
                   </thead>
                   <td>
-                  <ViewCustomers customers={customers} />
+                    <ViewCustomers customers={customers} />
                   </td>
-                  
                 </Table>
               </CardBody>
             </Card>

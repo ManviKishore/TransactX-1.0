@@ -16,7 +16,7 @@
 - Delete users with no credit cards
 - adding a new user
 
-## User Features
+## User
 
 - Their own transactions
 - Alert on approaching due dates
