@@ -4,7 +4,7 @@ var itemsPerPage = 5; // Number of items per page
 
 function ViewCustomers({ customers }) {
   // Number of items per page
-  // console.log("I'm here : ", customers);
+  console.log("I'm here : ", customers);
   // const [visibleCustomers, setVisibleCustomers] = useState(
   //   customers.slice(1, itemsPerPage)
   // );
@@ -34,13 +34,16 @@ function ViewCustomers({ customers }) {
     <>
       {/* Table header */}
       <tbody>
-        {visibleCustomers.map((customer, index) => (
-          <tr key={index}>
-            <td>{customer.ssn}</td>
-            <td>{customer.AccountNumber}</td>
-            <td>{customer.username}</td>
-          </tr>
-        ))}
+        {visibleCustomers.map(
+          (customer, index) =>
+            console.log(customer) && (
+              <tr key={index}>
+                <td>{customer.ssn}</td>
+                <td>{customer.AccountNumber}</td>
+                <td>{customer.username}</td>
+              </tr>
+            )
+        )}
       </tbody>
 
       {visibleCustomers.length < customers.length && (

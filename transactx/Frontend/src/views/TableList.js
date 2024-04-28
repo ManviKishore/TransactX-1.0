@@ -89,11 +89,12 @@ function RegularTables() {
         requiredRows = customers.filter(
           (row) => row[column.toLowerCase()] == value
         );
-        console.log(currentData);
+        console.log("inside filter");
+        console.log("prev current:", currentData.length);
         console.log(requiredRows);
 
-        setcurrentData(...requiredRows);
-        console.log(currentData);
+        setcurrentData(requiredRows);
+        console.log("updated current:", currentData.length);
       }
     }
   };
@@ -206,7 +207,7 @@ function RegularTables() {
                       <Input
                         key={colIndex}
                         type="text"
-                        value={filterText[colIndex]}
+                        // value={filterText[colIndex]}
                         placeholder={`Filter by ${col}`}
                         onChange={(event) =>
                           handleFilterChange(event, colIndex)
@@ -218,7 +219,7 @@ function RegularTables() {
                       <Input
                         key={colIndex}
                         type="text"
-                        value={filterText[colIndex]}
+                        // value={filterText[colIndex]}
                         placeholder={`Filter by ${col}`}
                         onChange={(event) =>
                           handleFilterChange(event, colIndex)
