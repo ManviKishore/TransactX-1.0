@@ -9,11 +9,11 @@ router.get('/byclosedate', async (req, res) => {
     
     const json_body = JSON.stringify(req.body);
 
-    // Execute the stored procedure with the JSON body as a parameter
+    // Execute the view
    const results = await sequelize.query('SELECT * FROM Accountsbyclosedandopen');
    console.log("Results:", results)
 
-  res.status(200).json({ message: 'By closedate results return successfully ' ,results:results});
+    res.status(200).json({ message: 'By closedate results return successfully ' ,results:results});
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });

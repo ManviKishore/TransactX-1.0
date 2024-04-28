@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -50,12 +50,16 @@ import {
   dashboardShippedProductsChart,
   dashboardAllProductsChart,
   dashboard24HoursPerformanceChart,
+  dashboardMonthPerformanceChart, 
 } from "variables/charts.js";
 
 import ViewCustomers from "variables/ViewCustomers";
 import ViewCards from "variables/ViewCards";
-import { dashboardMonthPerformanceChart } from "variables/charts";
 import Freq from "variables/Freq";
+import LineChart from "variables/LineChart";
+import { dashboardPanelChart2 } from "variables/charts";
+import BarChart from "variables/BarChart";
+import CustFreq from "variables/CustFreq";
 
 function Dashboard() {
 
@@ -152,8 +156,8 @@ function Dashboard() {
         const response = await axios.get("http://localhost:4000/byclosedate");
         // console.log(response.data.results[0][1].cnt);
         // setOpenAccounts(response.data.results[0][0]);
-        const openCount = response.data.results[0][0].cnt;
-        const closedCount = response.data.results[0][1].cnt;
+        const closedCount = response.data.results[0][0].cnt;
+        const openCount = response.data.results[0][1].cnt;
         setOpenAccounts(openCount);
         setClosedAccounts(closedCount);
         
@@ -163,20 +167,133 @@ function Dashboard() {
       }
     }
     getClosedbyDate();
-    console.log(openAccounts);
+    // console.log(openAccounts);
+  }, [3000]);
+
+  const [stateCount, setStateCount] = React.useState([]);
+  const [state, setState] = React.useState([]);
+
+  useEffect(() => {
+    const getByState = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/bystate");
+        // console.log(response.data.results[0]);
+        const states = response.data.results[0].map((item) => item.state);
+        const stateCount = response.data.results[0].map((item) => item.cnt);
+        setStateCount(stateCount);
+        setState(states);
+        // console.log(label);
+        // console.log(stateCount);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getByState();
   }, []);
 
+  const [avgMonthExpense, setAvgMonthExpense] = useState([]);
+  const [avgMonth, setAvgMonth] = useState([]);
+  
+  useEffect(() => {
+    const getAvgMonthExpense = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/avgmonthexpense");
+        // console.log(response.data.results[0]);
+        const avg = response.data.results[0].map((item) => item.average_amount);
+        // const labels = response.data.results[0].map((item) => item.month_transactionDate);
+        const labels = response.data.results[0]
+        .filter(item => item.month_transactionDate !== undefined && item.month_transactionDate !== null)
+        .map(item => {
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            return monthNames[item.month_transactionDate - 1];
+        });
+      
+
+          setAvgMonthExpense(avg);
+          setAvgMonth(labels);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getAvgMonthExpense();
+    // console.log(avgMonth);
+    // console.log(avgMonthExpense);
+  }, [1000]);
+
+  // const [cardsByType, setCardsByType] = useState([]);
+  const [visa, setVisa] = useState([]);
+  const [mastercard, setMastercard] = useState([]);
+  const [amex, setAmex] = useState([]);
+
+  useEffect(() => {
+    const getCardsByType = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/bycardtype");
+        // console.log(response.data.results[0]);
+        const visaCount = response.data.results[0][0].cnt;
+        const mastercardCount = response.data.results[0][1].cnt;
+        const amexCount = response.data.results[0][2].cnt;
+        setVisa(visaCount);
+        setMastercard(mastercardCount);
+        setAmex(amexCount);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getCardsByType();
+  }, []);
+
+  const [custValue, setCustValue] = useState([]);
+  const [custValueLabels, setCustValueLabels] = useState([]);
+  const getCustValue = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/customervalue");
+      // console.log(response.data.results[0]);
+      const value = response.data.results[0].map((item) => item.value);
+      const labels = response.data.results[0].map((item) => item.age);
+      setCustValue(value);
+      setCustValueLabels(labels);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  //use a button to get the customer value
+  const handleCustValue = async (event) => {
+    event.preventDefault();
+    getCustValue();
+  }
 
 
   return (
     <>
-      <PanelHeader
+      {/* <PanelHeader
         size="lg"
         content={
           <Line
             data={dashboardPanelChart.data}
             options={dashboardPanelChart.options}
           />
+        }
+      /> */}
+      {/* <PanelHeader
+        size="lg"
+        content={
+          <Line
+            data={dashboardPanelChart2.data}
+            options={dashboardPanelChart2.options}
+          />
+        }
+      /> */}
+      <PanelHeader
+        size="lg"
+        content={
+          <LineChart
+            labels={avgMonth}
+            data={avgMonthExpense}
+          />
+
         }
       />
       <div className="content">
@@ -215,6 +332,140 @@ function Dashboard() {
                 <div className="stats">
                   <i className="now-ui-icons arrows-1_refresh-69" /> Just
                   Updated
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Transactions</h5>
+                <CardTitle tag="h4">Average Monthly Expenses</CardTitle>
+                <UncontrolledDropdown>
+                  <DropdownToggle
+                    className="btn-round btn-outline-default btn-icon"
+                    color="default"
+                  >
+                    <i className="now-ui-icons loader_gear" />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>Change Year</DropdownItem>
+                    <DropdownItem>Add</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
+                    <DropdownItem className="text-danger">
+                      Remove data
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  {/* <Line
+                    data={dashboardAllProductsChart.data}
+                    options={dashboardAllProductsChart.options}
+                  /> */}
+                  <LineChart 
+                    labels={avgMonth}
+                    data={avgMonthExpense}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons arrows-1_refresh-69" /> Just
+                  Updated
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+          {/* <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={dashboard24HoursPerformanceChart.data}
+                    options={dashboard24HoursPerformanceChart.options}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last 7 days
+                </div>
+              </CardFooter>
+            </Card>
+          </Col> */}
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Freq 
+                    open={openAccounts}
+                    closed={closedAccounts}
+
+                  />
+                  {/* <Bar
+                    data={dashboardMonthPerformanceChart.aggregatedData}
+                    options={dashboardMonthPerformanceChart.options}
+                  /> */}
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last Year
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+
+
+        <Row>
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Customers</h5>
+                <CardTitle tag="h4">Customers By State</CardTitle>
+                <UncontrolledDropdown>
+                  <DropdownToggle
+                    className="btn-round btn-outline-default btn-icon"
+                    color="default"
+                  >
+                    <i className="now-ui-icons loader_gear" />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>View Customers</DropdownItem>
+                    <DropdownItem>Change Period</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
+                    <DropdownItem className="text-danger">
+                      Remove data
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  {/* <Line
+                    data={dashboardShippedProductsChart.data}
+                    options={dashboardShippedProductsChart.options}
+                  /> */}
+                  <BarChart
+                    labels={state}
+                    data={stateCount}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons arrows-1_refresh-69" /> Last 1 Year
                 </div>
               </CardFooter>
             </Card>
@@ -281,19 +532,20 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Accounts</h5>
-                <CardTitle tag="h4">Number of Accounts</CardTitle>
+                <h5 className="card-category">Customers</h5>
+                <CardTitle tag="h4">Customers by Card Type</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Freq 
-                    open={openAccounts}
-                    closed={closedAccounts}
-
+                  <CustFreq 
+                    visa={visa}
+                    master={mastercard}
+                    amex={amex}
                   />
-                  {/* <Bar
-                    data={dashboardMonthPerformanceChart.aggregatedData}
-                    options={dashboardMonthPerformanceChart.options}
+                  {/* <LineChart
+                    label={state}
+                    data={stateCount}
+
                   /> */}
                 </div>
               </CardBody>
@@ -305,6 +557,8 @@ function Dashboard() {
             </Card>
           </Col>
         </Row>
+
+
         <Row>
           <Col xs={12} md={6}>
             <Card>
