@@ -10,7 +10,7 @@ router.get('/creditcard', async (req, res) => {
     const json_body = JSON.stringify(req.body);
 
     // Execute the stored procedure with the JSON body as a parameter
-   const results = await sequelize.query('SELECT * FROM creditcard');
+   const results = await sequelize.query('Select AccountNumber,CardType,Annual_Percentage_Rate,InterestLatePayment,id,Masked_cred_num from CreditCard');
    console.log("Results:", results)
 
   res.status(200).json({ message: 'Credit card results return successfully ' ,results:results});

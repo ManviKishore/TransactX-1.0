@@ -10,7 +10,7 @@ router.get('/customer', async (req, res) => {
     const json_body = JSON.stringify(req.body);
 
     // Execute the stored procedure with the JSON body as a parameter
-   const results = await sequelize.query('SELECT c.ssn,c.AccountNumber,c.username,firstname,Lastname,streetaddress,city,state,age,gender,monthly_income FROM customer c  inner join person p on c.ssn=p.ssn');
+   const results = await sequelize.query('SELECT c.id,c.ssn,c.AccountNumber,c.username,firstname,Lastname,streetaddress,city,state,age,gender,monthly_income FROM customer c  inner join person p on c.ssn=p.ssn');
 
 
   res.status(200).json({ message: 'Customer results return successfully ' ,results:results});
