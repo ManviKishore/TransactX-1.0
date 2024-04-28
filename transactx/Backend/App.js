@@ -12,6 +12,8 @@ const getState = require('./Api/bystate.js')
 const getAvgMonthExpense = require('./Api/avgmonthexpense.js')
 const getCustbyCard = require('./Api/bycardtype.js')
 const getCustomerValue = require('./Api/customervalue.js')
+const getLatePayments = require('./Api/latepayments.js')
+const getUtilisationByCard = require('./Api/utilisationbycard.js')
 
 const cors = require('cors');
 app.use(cors());
@@ -25,6 +27,8 @@ app.use('',getState)
 app.use('',getAvgMonthExpense)
 app.use('',getCustbyCard)
 app.use('',getCustomerValue)
+app.use('',getLatePayments)
+app.use('',getUtilisationByCard)
 
 
 module.exports = app;

@@ -4,17 +4,15 @@ const sequelize = require("../sequelize");
 const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
-router.get('/customervalue', async (req, res) => {
+router.get('/utilisationbycard', async (req, res) => {
     try {
-        
         const json_body = JSON.stringify(req.body);
     
         // Execute the view
-     const results = await sequelize.query(
-        'SELECT * FROM CustomerLifetimeValue ORDER BY customerLifetimevalue DESC');
-     console.log("Results for customer value:", results)
+     const results = await sequelize.query('SELECT * FROM AverageCreditutilizedBycardtype');
+     console.log("Results:", results)
     
-        res.status(200).json({ message: 'Successful ', results:results});
+        res.status(200).json({ message: 'Utilisation by card results returned successfully ' ,results:results});
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -23,4 +21,3 @@ router.get('/customervalue', async (req, res) => {
 );
 
 module.exports = router;
-

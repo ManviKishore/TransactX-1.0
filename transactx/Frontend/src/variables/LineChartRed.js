@@ -1,28 +1,29 @@
 // import React from 'react';
 // import { Line } from 'react-chartjs-2';
 
-// const LineChart = ({ labels, data }) => { 
-
-  
-
+// const LineChartRed = ({ labels, data }) => {
 //  const chartData = {
 //     labels: labels,
 //     datasets: [
 //       {
 //         label: "Data",
 //         data: data,
-//         fill: false,
-//         backgroundColor: 'rgba(75,192,192,0.4)',
-//         borderColor: 'rgba(75,192,192,1)',
+//         fill: true,
+//         backgroundColor: 'rgba(24, 206, 15, 0.4)', // Adjusted to match dashboardAllProductsChart
+//         borderColor: 'rgba(24, 206, 15, 1)', // Adjusted to match dashboardAllProductsChart
 //         borderWidth: 2,
+//         pointBorderColor: "#FFF",
+//         pointBackgroundColor: "#18ce0f",
+//         pointBorderWidth: 2,
+//         pointHoverRadius: 4,
+//         pointHoverBorderWidth: 1,
+//         pointRadius: 4,
+//         tension: 0.4,
 //       },
 //     ],
-        
 //  };
 
 //  const options = {
-  
-//     options: {
 //     layout: {
 //       padding: {
 //         left: 20,
@@ -76,8 +77,10 @@
 //         },
 //       },
 //     },
-//   },
-//   };
+//     layout: {
+//       padding: { left: 0, right: 0, top: 15, bottom: 15 },
+//     },
+//  };
 
 //  return (
 //     <div>
@@ -86,26 +89,26 @@
 //  );
 // };
 
-// export default LineChart;
+// export default LineChartRed;
 
 
 
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 
-const LineChart = ({ labels, data }) => {
+const LineChartRed = ({ labels, data }) => {
  const chartData = {
     labels: labels,
     datasets: [
       {
-        label: "Data",
+        label: "Late Payments",
         data: data,
         fill: true,
-        backgroundColor: 'rgba(24, 206, 15, 0.4)', // Adjusted to match dashboardAllProductsChart
-        borderColor: 'rgba(24, 206, 15, 1)', // Adjusted to match dashboardAllProductsChart
+        backgroundColor: 'rgba(128, 182, 244, 0)', 
+        borderColor: '#f96332', 
         borderWidth: 2,
         pointBorderColor: "#FFF",
-        pointBackgroundColor: "#18ce0f",
+        pointBackgroundColor: "#f96332",
         pointBorderWidth: 2,
         pointHoverRadius: 4,
         pointHoverBorderWidth: 1,
@@ -115,33 +118,7 @@ const LineChart = ({ labels, data }) => {
     ],
  };
 
- 
-
  const options = {
-    layout: {
-      padding: {
-        left: 20,
-        right: 20,
-        top: 0,
-        bottom: 0,
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltips: {
-        backgroundColor: "#fff",
-        titleFontColor: "#333",
-        bodyFontColor: "#666",
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest",
-      },
-    },
-    maintainAspectRatio: false,
     scales: {
       y: {
         ticks: {
@@ -159,6 +136,7 @@ const LineChart = ({ labels, data }) => {
           zeroLineColor: "transparent",
         },
       },
+      // maintainmaintainAspectRatio: false,
       x: {
         grid: {
           display: false,
@@ -172,7 +150,7 @@ const LineChart = ({ labels, data }) => {
       },
     },
     layout: {
-      padding: { left: 0, right: 0, top: 15, bottom: 15 },
+      padding: { left: 0, right: 0, top: 5, bottom: 5 },
     },
  };
 
@@ -183,4 +161,4 @@ const LineChart = ({ labels, data }) => {
  );
 };
 
-export default LineChart;
+export default LineChartRed;

@@ -1,16 +1,15 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
-const CustFreq = ({ visa, master, amex }) => {
-
+const CustFreq = ({ data, labels, label, backgroundColor }) => {
     
  const chartData = {
-    labels: ['Visa', 'Master', 'Amex'],
+    labels: labels, // ['Visa', 'Master', 'Amex'],
     datasets: [
       {
-        label: 'Open vs Closed Account',
-        data: [visa, master, amex], 
-        backgroundColor: ['#FF6384', '#2CA8FF', '#FFCE56'], 
+        label: label, //'Open vs Closed Account'
+        data: data, //[visa, master, amex]
+        backgroundColor: backgroundColor, //['#FF6384', '#2CA8FF', '#FFCE56'], 
         borderWidth: 1,
       },
     ],

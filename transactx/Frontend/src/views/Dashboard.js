@@ -60,6 +60,10 @@ import LineChart from "variables/LineChart";
 import { dashboardPanelChart2 } from "variables/charts";
 import BarChart from "variables/BarChart";
 import CustFreq from "variables/CustFreq";
+import ViewCustValue from "variables/ViewCustValue";
+import LineChartRed from "variables/LineChartRed";
+import ViewLatePayments from "variables/ViewLatePayments";
+import DispCustomers from "variables/DispCustomers";
 
 function Dashboard() {
   const [data, setData] = React.useState({
@@ -244,9 +248,9 @@ function Dashboard() {
   const getCustValue = async () => {
     try {
       const response = await axios.get("http://localhost:4000/customervalue");
-      // console.log(response.data.results[0]);
-      const value = response.data.results[0].map((item) => item.value);
-      const labels = response.data.results[0].map((item) => item.age);
+      console.log(response.data.results[0]);
+      const value = response.data.results[0]; //.map((item) => item.customerLifetimevalue);
+      const labels = response.data.results[0].map((item) => item.agegroup);
       setCustValue(value);
       setCustValueLabels(labels);
     } catch (error) {
@@ -259,6 +263,61 @@ function Dashboard() {
     getCustValue();
   }
 
+  const [visaUtil, setVisaUtil] = useState([]);
+  const [masterUtil, setMasterUtil] = useState([]);
+  const [amexUtil, setAmexUtil] = useState([]);
+
+  useEffect (() => {
+    const getUtilisation = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/utilisationbycard");
+        // console.log(response.data.results[0]);
+        const visaUtil = response.data.results[0][0].cnt;
+        const masterUtil = response.data.results[0][1].cnt;
+        const amexUtil = response.data.results[0][2].cnt;
+        setVisaUtil(visaUtil);
+        setMasterUtil(masterUtil);
+        setAmexUtil(amexUtil);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getUtilisation();
+  }, []);
+
+  const [latePayments, setLatePayments] = useState([]);
+  const [latePaymentLabels, setLatePaymentLabels] = useState([]);
+  const [lateData, setLateData] = useState([]);
+
+  useEffect(() => {
+    const getLatePayments = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/latepayments");
+        // console.log(response.data.results[0][1].Month_duedate);
+        const late = response.data.results[0].map((item) => item.cnt);
+        const data = response.data.results[0];
+        const months = response.data.results[0]
+        .filter(item => item.Month_duedate !== undefined && item.Month_duedate !== null)
+        .map(item => {
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            return monthNames[item.Month_duedate - 1];
+        });
+        setLatePayments(late);
+        setLatePaymentLabels(months); 
+        setLateData(data);
+        // console.log(lateData[0].year_duedate);             
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getLatePayments();
+    
+  }, []);
+
+  const handleLatePayments = async (event) => {
+    event.preventDefault();
+
+  }
 
   return (
     <>
@@ -316,10 +375,15 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  {/* <Line
                     data={dashboardShippedProductsChart.data}
                     options={dashboardShippedProductsChart.options}
+                  /> */}
+                  <LineChartRed
+                    labels={latePaymentLabels}
+                    data={latePayments}
                   />
+
                 </div>
               </CardBody>
               <CardFooter>
@@ -492,7 +556,7 @@ function Dashboard() {
             <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Transactions</h5>
-                <CardTitle tag="h4">Transactions Per Card</CardTitle>
+                <CardTitle tag="h4">Utilisation Per Card</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
@@ -512,9 +576,16 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  {/* <Line
                     data={dashboardAllProductsChart.data}
                     options={dashboardAllProductsChart.options}
+                  /> */}
+                  <CustFreq
+                    data={[ visaUtil, masterUtil, amexUtil ]}
+                    labels={['Visa', 'Mastercard', 'Amex']}
+                    label='Card Utilisation'
+                    // use green and orange for the bars
+                    backgroundColor={['#2CAF8F', '#2CBFF', '#2CA']}
                   />
                 </div>
               </CardBody>
@@ -555,11 +626,19 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <CustFreq 
+                  <CustFreq
+                    data={[ visa, mastercard, amex ]}
+                    labels={['Visa', 'Mastercard', 'Amex']}
+                    label='Open vs Closed Account'
+                    backgroundColor={['#FF6384', '#2CA8FF', '#FFCE56']}
+                  />
+
+
+                  {/* <CustFreq 
                     visa={visa}
                     master={mastercard}
                     amex={amex}
-                  />
+                  /> */}
                   {/* <LineChart
                     label={state}
                     data={stateCount}
@@ -867,10 +946,95 @@ function Dashboard() {
             </Card>
           </Col>
           <Col xs={12} md={6}>
+
+          <Card>
+              <CardHeader>
+              {custValue && custValueLabels && (
+                  <Button onClick={handleCustValue} color="primary">
+                  Show Customer Value
+                </Button>
+                )}
+                <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCustValue 
+                    custLifeVal={custValue}
+                  />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+
+          
+        </Row>
+        <Row>
+        <Col xs={12} md={12}>
+
+          <Card>
+            <CardHeader>
+            
+              {/* {latePayments && latePaymentLabels && (
+                <Button onClick={handleLatePayments} color="primary">
+                Show Late Payments
+              </Button>
+              )} */}
+             
+              <h5 className="card-category"></h5>
+              <CardTitle tag="h4">Late Payment Details</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Table responsive>
+                  <ViewLatePayments 
+                    payments={lateData && lateData}
+                  />
+                
+              </Table>
+            </CardBody>
+          </Card>
+          </Col>
+          {/* <Col xs={12} md={12}>
             <Card>
               <CardHeader>
-                {/* <h5 className="card-category"></h5> */}
-                <CardTitle tag="h4">Cards</CardTitle>
+              
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCards cards={custValue} />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col> */}
+
+          
+        </Row>
+        <Row>
+          {/* <Col xs={12} md={12}>
+            <Card>
+              <CardHeader>
+              
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCards cards={custValue} />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col> */}
+        </Row>
+        <Row>
+          <Col xs={12} md={12}>
+          {/* <Card>
+              <CardHeader>
+                {custValue && custValueLabels && (
+                  <Button onClick={handleCustValue} color="primary">
+                  Show Customer Value
+                </Button>
+                )}
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
@@ -911,39 +1075,7 @@ function Dashboard() {
                   </tbody>
                 </Table>
               </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} md={12}>
-            <Card>
-              <CardHeader>
-                {" "}
-                <h5 className="card-category"></h5>
-                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table responsive>
-                  <ViewCards cards={cards} />
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} md={12}>
-            <Card>
-              <CardHeader>
-                {" "}
-                <h5 className="card-category"></h5>
-                <CardTitle tag="h4">Cards</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table responsive>
-                  <ViewCards cards={cards} />
-                </Table>
-              </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
 
@@ -952,7 +1084,7 @@ function Dashboard() {
             <Card>
               <CardHeader>
                 {/* <h5 className="card-category"></h5> */}
-                <CardTitle tag="h4">Customer Details</CardTitle>
+                <CardTitle tag="h4">All Customers</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
@@ -963,15 +1095,15 @@ function Dashboard() {
                       <th>Age</th>
                       <th>Address</th>
                       <th className="text-right">Income</th>
-                      <th>SSN</th>
+                      {/* <th>SSN</th> */}
                       <th>Gender</th>
                       <th>Username</th>
                       <th>AccountNumber</th>
                     </tr>
                   </thead>
-                  <td>
-                    <ViewCustomers customers={customers} />
-                  </td>
+                  {/* <td> */}
+                    <DispCustomers customers={customers} />
+                  {/* </td> */}
                 </Table>
               </CardBody>
             </Card>
