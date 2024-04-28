@@ -38,8 +38,7 @@ const tasks = [
 // // // table head data and table body data for Tables view
 // #############################
 
-const theadCustomer = ["SSN", "AccountNo", "Username", "Password"];
-const filterInputCust = ["SSN", "AccountNo", "Username"];
+const theadCustomer = ["SSN", "AccountNo", "Username"];
 const theadPerson = [
   "SSN",
   "FirstName",
@@ -49,11 +48,11 @@ const theadPerson = [
   "State",
 ];
 const theadCrditCard = [
-  "CardNumber",
   "AccountNo",
   "CardType",
   "Annual % Rate",
   "Interest Late Payment",
+  "Masked_cred_num",
 ];
 const tbody = [
   {
@@ -86,11 +85,4 @@ const tbody = [
 // tasks list for Tasks card in Dashboard view
 // data for <thead> of table in TableList view
 // data for <tbody> of table in TableList view
-export {
-  tasks,
-  theadCustomer,
-  theadCrditCard,
-  tbody,
-  filterInputCust,
-  theadPerson,
-};
+export { tasks, theadCustomer, theadCrditCard, tbody, theadPerson };

@@ -1,8 +1,6 @@
 # Credit Card Transaction Management System
 
-## Admin
-
-### Features
+## Admin Features
 
 - Transactions per Card Type
 - Card Types per Location - frequency
@@ -16,11 +14,9 @@
 - Update credit card number if user gets a new one (replacement)
 - Add credit card number to an account
 - Delete users with no credit cards
-- Add a user
+- adding a new user
 
 ## User
-
-### Features
 
 - Their own transactions
 - Alert on approaching due dates

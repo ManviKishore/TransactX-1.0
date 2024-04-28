@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+
 import {
   Card,
   CardBody,
@@ -16,38 +19,28 @@ import {
   theadCrditCard,
   theadCustomer,
   tbody,
-  filterInputCust,
   theadPerson,
 } from "variables/general";
+import ViewCustomers from "variables/ViewCustomers";
+import ViewCreditCard from "variables/ViewCreditCard";
+import ViewPerson from "variables/ViewPersons";
 
 function RegularTables() {
-  //actual table data can be used here.
   const [tableData, setTableData] = useState(theadCustomer);
-  const [rowIndex, setRowIndex] = useState(0);
-  const [formData, setFormData] = useState({}); // State to hold form data
+  const [customers, setCustomers] = React.useState([]);
+  const [creditcards, setCreditcards] = React.useState([]);
+  const [currentData, setcurrentData] = React.useState([]);
 
-  const [userToDelete, setUserToDelete] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
+  } = useForm();
 
   const [filterText, setFilterText] = useState(
     Array(theadCustomer.length).fill("")
   );
   const [selectedTableName, setSelectedTableName] = useState("Customer");
-
-  const handleFilterChange = (event, colIndex) => {
-    const { value } = event.target;
-    const newFilterText = [...filterText];
-    newFilterText[colIndex] = value;
-    setFilterText(newFilterText);
-    const filteredData = tbody.filter((row) =>
-      row.data[colIndex].toLowerCase().includes(value.toLowerCase())
-    );
-    setTableData(filteredData);
-  };
-
-  const handleSave = () => {
-    // Logic to save the edited table data
-    console.log("Table data saved:", tableData);
-  };
 
   const handleTableSelect = (tableName) => {
     setSelectedTableName(tableName);
@@ -55,16 +48,62 @@ function RegularTables() {
     setFilterText(Array(theadCustomer.length).fill(""));
     if (tableName === "Customer") {
       setTableData(theadCustomer);
+      setcurrentData(customers);
     } else if (tableName == "CreditCard") {
+      setcurrentData(creditcards);
       setTableData(theadCrditCard);
     } else if (tableName == "Person") {
       setTableData(theadPerson);
+      setcurrentData(customers);
     }
   };
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    console.log("Form Data:", formData);
+  const getCustomers = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/customer");
+      setCustomers(response.data.results[0]);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
+  const getCreditCards = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/creditcard");
+      setCreditcards(response.data.results[0]);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleFilterChange = (event, column) => {
+    if (event.key === "Enter") {
+      const { value } = event.target;
+
+      let requiredRows = [];
+      if (selectedTableName === "CreditCard") {
+        requiredRows = creditcards.filter((row) =>
+          row.data[column].toLowerCase().includes(value.toLowerCase())
+        );
+        console.log(requiredRows);
+        setcurrentData(requiredRows);
+      } else {
+        requiredRows = customers.filter(
+          (row) => row[column.toLowerCase()] == value
+        );
+        console.log(currentData);
+        console.log(requiredRows);
+
+        setcurrentData(...requiredRows);
+        console.log(currentData);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getCustomers();
+    getCreditCards();
+  }, [selectedTableName]);
+
+  const onSubmit = (data) => console.log(data);
 
   return (
     <>
@@ -83,6 +122,7 @@ function RegularTables() {
                     onClick={() => handleTableSelect("Customer")}
                     active={selectedTableName === "Customer"}
                   >
+                    {" "}
                     Customer
                   </Button>
                   <Button
@@ -99,20 +139,66 @@ function RegularTables() {
                   >
                     Credit Card
                   </Button>
-
-                  {/* Add more buttons for additional tables */}
                 </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <Table responsive>
+                    <tr style={{ alignItems: "center" }}>
+                      {(selectedTableName === "Customer" ||
+                        selectedTableName === "CreditCard") &&
+                        tableData.map((col, colIndex) => (
+                          <td>
+                            <input
+                              {...register(col)}
+                              type="text"
+                              //  name={`col-${colIndex}`} // Unique name for each input
+                              placeholder={col}
+                              // value={col} // Use form data if available, otherwise use initial value
+                            />
+                          </td>
+                        ))}
+                    </tr>
+                  </Table>
+                  {(selectedTableName === "Customer" ||
+                    selectedTableName === "CreditCard") && (
+                    <Button type="submit" color="primary">
+                      Save
+                    </Button>
+                  )}
+                </form>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12}>
+            <Card>
+              <CardHeader>
+                {selectedTableName === "Customer" && (
+                  <CardTitle tag="h4">
+                    <h4>Customers </h4>
+                  </CardTitle>
+                )}
+                {selectedTableName === "Person" && (
+                  <CardTitle tag="h4">
+                    <h4>Persons </h4>
+                  </CardTitle>
+                )}
+                {selectedTableName === "CreditCard" && (
+                  <CardTitle tag="h4">
+                    <h4>Credit Card Details </h4>
+                  </CardTitle>
+                )}
+              </CardHeader>
+              <CardBody>
                 <div className="filter-inputs">
                   {selectedTableName === "Customer" &&
-                    filterInputCust.map((col, colIndex) => (
+                    theadCustomer.map((col, colIndex) => (
                       <Input
                         key={colIndex}
                         type="text"
-                        value={filterText[colIndex]}
+                        // value={filterText[colIndex]}
                         placeholder={`Filter by ${col}`}
-                        onChange={(event) =>
-                          handleFilterChange(event, colIndex)
-                        }
+                        onKeyDown={(event) => handleFilterChange(event, col)}
                       />
                     ))}
                   {selectedTableName === "CreditCard" &&
@@ -142,78 +228,54 @@ function RegularTables() {
                 </div>
                 <Table responsive>
                   <thead className="text-primary">
-                    <tr style={{ fontSize: "0.8rem" }}>
-                      {selectedTableName === "Customer" &&
-                        theadCustomer.map((prop, key) => (
-                          <th key={key}>{prop}</th>
-                        ))}
+                    <tr>
                       {selectedTableName === "CreditCard" &&
-                        theadCrditCard.map((prop, key) => (
-                          <th key={key}>{prop}</th>
-                        ))}
+                        theadCrditCard.map((col, colIndex) => <th>{col}</th>)}
+                      {selectedTableName === "Customer" &&
+                        theadCustomer.map((col, colIndex) => <th>{col}</th>)}
                       {selectedTableName === "Person" &&
-                        theadPerson.map((prop, key) => (
-                          <th key={key}>{prop}</th>
-                        ))}
+                        theadPerson.map((col, colIndex) => <th>{col}</th>)}
                     </tr>
                   </thead>
-                  <tbody>
-                    <form onSubmit={handleFormSubmit}>
-                      {/* Form starts here */}
-
-                      {/* <form onSubmit={handleFormSubmit}> */}
-                      <tr key={rowIndex} style={{ fontSize: "0.7rem" }}>
-                        {rowData.map((prop, colIndex) => (
-                          <td key={colIndex}>
-                            <input
-                              type="text"
-                              name={`row-${rowIndex}-col-${colIndex}`} // Unique name for each input
-                              value={
-                                formData[`row-${rowIndex}-col-${colIndex}`] ||
-                                prop
-                              } // Use form data if available, otherwise use initial value
-                              onChange={(event) =>
-                                handleInputChange(event, rowIndex, colIndex)
-                              }
-                            />
-                          </td>
-                        ))}
-                      </tr>
-                    </form>
-                  </tbody>
+                  {selectedTableName === "CreditCard" && (
+                    <ViewCreditCard creditCards={currentData} />
+                  )}
+                  {selectedTableName === "Customer" && (
+                    <ViewCustomers customers={currentData} />
+                  )}
+                  {selectedTableName === "Person" && (
+                    <ViewPerson persons={currentData} />
+                  )}
                 </Table>
-                <Button type="submit" color="primary" onClick={handleSave}>
-                  Save
-                </Button>
               </CardBody>
             </Card>
           </Col>
         </Row>
-      </div>
-      <p></p>
-      <div className="content">
-        <Row>
-          <Col xs={12}>
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">
-                  <h4>Delete Users </h4> <h6> (with no credit cards)</h6>
-                </CardTitle>
+        {(selectedTableName === "Customer" ||
+          selectedTableName === "CreditCard") && (
+          <Row>
+            <Col xs={12}>
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h4">
+                    <h4>Delete Users </h4> <h6> (with no credit cards)</h6>
+                  </CardTitle>
 
-                <Input
-                  type="text"
-                  value={userToDelete}
-                  placeholder={`Enter SSN`}
-                  // onChange={(event) => handleFilterChange(event, colIndex)}
-                />
-              </CardHeader>
-              <Button color="primary" style={{ marginLeft: "1rem" }}>
-                Delete
-              </Button>
-              <CardBody></CardBody>
-            </Card>
-          </Col>
-        </Row>
+                  <Input
+                    type="text"
+                    // value={userToDelete}
+                    placeholder={`Enter SSN`}
+                    // onChange={(event) => handleFilterChange(event, colIndex)}
+                  />
+                </CardHeader>
+                <Button color="primary" style={{ marginLeft: "1rem" }}>
+                  Delete
+                </Button>
+                <CardBody></CardBody>
+              </Card>
+            </Col>
+          </Row>
+        )}
       </div>
     </>
   );

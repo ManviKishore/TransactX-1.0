@@ -15,9 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect } from "react";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
+import { IoNotificationsOutline } from "react-icons/io5";
+import axios from "axios";
 
 // reactstrap components
 import {
@@ -50,7 +52,70 @@ import {
   dashboard24HoursPerformanceChart,
 } from "variables/charts.js";
 
+import ViewCustomers from "variables/ViewCustomers";
+
 function Dashboard() {
+  const [data, setData] = React.useState({
+    Tablename: "",
+    Operation: "",
+    SSN: "",
+    Username: "",
+    Password: "",
+    AccountNumber: "",
+  });
+
+  const [customers, setCustomers] = React.useState([]);
+
+  const handleInputChange = (e) => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const postData = {
+        Tablename: data.Tablename,
+        Operation: data.Operation,
+        SSN: data.SSN,
+        Username: data.Username,
+        Password: data.Password,
+        AccountNumber: data.AccountNumber,
+      };
+      setData(postData);
+      const response = await fetch("http://localhost:4000/tableops", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  //get the active customers
+  const getCustomers = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/customer");
+      setCustomers(response.data.results[0]);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    getCustomers();
+  }, []);
+
   return (
     <>
       <PanelHeader
@@ -67,8 +132,8 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">User Accounts</h5>
-                <CardTitle tag="h4">Number of Accounts</CardTitle>
+                <h5 className="card-category">Payments</h5>
+                <CardTitle tag="h4">Late Payments</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
@@ -77,9 +142,9 @@ function Dashboard() {
                     <i className="now-ui-icons loader_gear" />
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem>Action</DropdownItem>
-                    <DropdownItem>Another Action</DropdownItem>
-                    <DropdownItem>Something else here</DropdownItem>
+                    <DropdownItem>View Customers</DropdownItem>
+                    <DropdownItem>Change Period</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
                     <DropdownItem className="text-danger">
                       Remove data
                     </DropdownItem>
@@ -115,9 +180,9 @@ function Dashboard() {
                     <i className="now-ui-icons loader_gear" />
                   </DropdownToggle>
                   <DropdownMenu right>
-                    <DropdownItem>Action</DropdownItem>
-                    <DropdownItem>Another Action</DropdownItem>
-                    <DropdownItem>Something else here</DropdownItem>
+                    <DropdownItem>Change Year</DropdownItem>
+                    <DropdownItem>Add</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
                     <DropdownItem className="text-danger">
                       Remove data
                     </DropdownItem>
@@ -143,8 +208,8 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Email Statistics</h5>
-                <CardTitle tag="h4">24 Hours Performance</CardTitle>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
@@ -164,10 +229,108 @@ function Dashboard() {
         </Row>
         <Row>
           <Col xs={12} md={6}>
+            <Card>
+              <CardHeader>
+                <h5 className="card-category">Customer Table</h5>
+              </CardHeader>
+
+              <CardBody>
+                <form onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Label for="Tablename">Table Name</Label>
+                    <Input
+                      type="select"
+                      name="Tablename"
+                      id="tablename"
+                      value={data.Tablename}
+                      onChange={handleInputChange}
+                    >
+                      <option value=" ">Select table name</option>
+                      <option value="Customer">Customer</option>
+                      <option value="Account">Account</option>
+                    </Input>
+                  </FormGroup>
+
+                  {/* Add a select */}
+                  <FormGroup>
+                    <Label for="Operation">Operation</Label>
+                    <Input
+                      type="select"
+                      name="Operation"
+                      id="operation"
+                      value={data.Operation}
+                      onChange={handleInputChange}
+                    >
+                      <option value=" ">Select operation</option>
+                      <option value="Add">Add</option>
+                      <option value="Update">Update</option>
+                      <option value="Delete">Delete</option>
+                    </Input>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="SSN">Customer SSN</Label>
+                    <Input
+                      type="text"
+                      name="SSN"
+                      id="ssn"
+                      placeholder="Enter Customer SSN"
+                      value={data.SSN}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="Username">Username</Label>
+                    <Input
+                      type="text"
+                      name="Username"
+                      id="username"
+                      placeholder="Enter Customer Username"
+                      value={data.Name}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="Password">Initial Password</Label>
+                    <Input
+                      type="text"
+                      name="Password"
+                      id="password"
+                      placeholder="Enter Customer Password"
+                      value={data.Password}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="AccountNumber">Account Number</Label>
+                    <Input
+                      type="text"
+                      name="AccountNumber"
+                      id="condition"
+                      placeholder="Account Number"
+                      value={data.AccountNumber}
+                      onChange={handleInputChange}
+                    />
+                  </FormGroup>
+
+                  <Button>Add Customer</Button>
+                </form>
+                {/* <Table responsive> */}
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={12} md={6}>
             <Card className="card-tasks">
               <CardHeader>
-                <h5 className="card-category">Backend Development</h5>
-                <CardTitle tag="h4">Tasks</CardTitle>
+                <h5 className="card-category">
+                  {" "}
+                  <IoNotificationsOutline />{" "}
+                </h5>
+                <CardTitle tag="h4">Notifications</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="table-full-width table-responsive">
@@ -175,16 +338,15 @@ function Dashboard() {
                     <tbody>
                       <tr>
                         <td>
-                          <FormGroup check>
+                          {/* <FormGroup check>
                             <Label check>
                               <Input defaultChecked type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
-                          </FormGroup>
+                          </FormGroup> */}
                         </td>
                         <td className="text-left">
-                          Sign contract for "What are conference organizers
-                          afraid of?"
+                          Pending transactions exceeded threshold.
                         </td>
                         <td className="td-actions text-right">
                           <Button
@@ -199,7 +361,7 @@ function Dashboard() {
                             delay={0}
                             target="tooltip731609871"
                           >
-                            Edit Task
+                            View
                           </UncontrolledTooltip>
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -219,17 +381,55 @@ function Dashboard() {
                       </tr>
                       <tr>
                         <td>
-                          <FormGroup check>
+                          {/* <FormGroup check>
+                            <Label check>
+                              <Input defaultChecked type="checkbox" />
+                              <span className="form-check-sign" />
+                            </Label>
+                          </FormGroup> */}
+                        </td>
+                        <td className="text-left">Late payments detected.</td>
+                        <td className="td-actions text-right">
+                          <Button
+                            className="btn-round btn-icon btn-icon-mini btn-neutral"
+                            color="info"
+                            id="tooltip731609871"
+                            type="button"
+                          >
+                            <i className="now-ui-icons ui-2_settings-90" />
+                          </Button>
+                          <UncontrolledTooltip
+                            delay={0}
+                            target="tooltip731609871"
+                          >
+                            View
+                          </UncontrolledTooltip>
+                          <Button
+                            className="btn-round btn-icon btn-icon-mini btn-neutral"
+                            color="danger"
+                            id="tooltip923217206"
+                            type="button"
+                          >
+                            <i className="now-ui-icons ui-1_simple-remove" />
+                          </Button>
+                          <UncontrolledTooltip
+                            delay={0}
+                            target="tooltip923217206"
+                          >
+                            Remove
+                          </UncontrolledTooltip>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          {/* <FormGroup check>
                             <Label check>
                               <Input type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
-                          </FormGroup>
+                          </FormGroup> */}
                         </td>
-                        <td className="text-left">
-                          Lines From Great Russian Literature? Or E-mails From
-                          My Boss?
-                        </td>
+                        <td className="text-left">New transactions made</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -243,7 +443,7 @@ function Dashboard() {
                             delay={0}
                             target="tooltip907509347"
                           >
-                            Edit Task
+                            View
                           </UncontrolledTooltip>
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -263,18 +463,14 @@ function Dashboard() {
                       </tr>
                       <tr>
                         <td>
-                          <FormGroup check>
+                          {/* <FormGroup check>
                             <Label check>
                               <Input defaultChecked type="checkbox" />
                               <span className="form-check-sign" />
                             </Label>
-                          </FormGroup>
+                          </FormGroup> */}
                         </td>
-                        <td className="text-left">
-                          Flooded: One year later, assessing what was lost and
-                          what was found when a ravaging rain swept through
-                          metro Detroit
-                        </td>
+                        <td className="text-left">User card added</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -288,7 +484,7 @@ function Dashboard() {
                             delay={0}
                             target="tooltip326247652"
                           >
-                            Edit Task
+                            View
                           </UncontrolledTooltip>
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -322,19 +518,25 @@ function Dashboard() {
           <Col xs={12} md={6}>
             <Card>
               <CardHeader>
-                <h5 className="card-category">All Persons List</h5>
-                <CardTitle tag="h4">Employees Stats</CardTitle>
+                {/* <h5 className="card-category"></h5> */}
+                <CardTitle tag="h4">Cards</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
                   <thead className="text-primary">
                     <tr>
-                      <th>Name</th>
-                      <th>Country</th>
-                      <th>City</th>
-                      <th className="text-right">Salary</th>
+                      <th>Firstname</th>
+                      {/* <th>Lastname</th> */}
+                      <th>Address</th>
+                      <th>Age</th>
+                      {/* <th>Gender</th> */}
+                      <th className="text-right">Income</th>
+                      {/* <th>SSN</th>
+                      <th>Username</th>
+                      <th>AccountNumber</th> */}
                     </tr>
                   </thead>
+
                   <tbody>
                     <tr>
                       <td>Dakota Rice</td>
@@ -360,13 +562,41 @@ function Dashboard() {
                       <td>Feldkirchen in Kärnten</td>
                       <td className="text-right">$63,542</td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <td>Mason Porter</td>
                       <td>Chile</td>
                       <td>Gloucester</td>
                       <td className="text-right">$78,615</td>
-                    </tr>
+                    </tr> */}
                   </tbody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} md={12}>
+            <Card>
+              <CardHeader>
+                {/* <h5 className="card-category"></h5> */}
+                <CardTitle tag="h4">Customer Details</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <thead className="text-primary">
+                    <tr>
+                      <th>Firstname</th>
+                      <th>Lastname</th>
+                      <th>Age</th>
+                      <th>Address</th>
+                      <th className="text-right">Income</th>
+                      <th>SSN</th>
+                      <th>Gender</th>
+                      <th>Username</th>
+                      <th>AccountNumber</th>
+                    </tr>
+                  </thead>
+                  <ViewCustomers customers={customers} />
                 </Table>
               </CardBody>
             </Card>
