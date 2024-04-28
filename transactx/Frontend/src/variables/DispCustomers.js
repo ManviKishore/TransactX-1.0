@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Input } from "reactstrap";
 var itemsPerPage = 5; // Number of items per page
 
-function ViewCustomers({ customers }) {
+function DispCustomers ({ customers }) {
   // Number of items per page
   // console.log("I'm here : ", customers);
   // const [visibleCustomers, setVisibleCustomers] = useState(
@@ -38,9 +38,16 @@ function ViewCustomers({ customers }) {
           (customer, index) =>
             // console.log(customer) && (
               <tr key={index}>
-                <td>{customer.ssn}</td>
-                <td>{customer.AccountNumber}</td>
+                         
+                <td>{customer.firstname}</td>
+                <td>{customer.Lastname}</td>
+                <td className="text-center">{customer.age}</td>
+                <td>{`${customer.city}, ${customer.state}`}</td>
+                <td className="text-center">{customer.monthly_income}</td>
+                {/* <td>{customer.ssn}</td> */}
+                <td>{customer.gender}</td>
                 <td>{customer.username}</td>
+                <td className="text-center">{customer.AccountNumber}</td>
               </tr>
             // )
         )}
@@ -48,14 +55,14 @@ function ViewCustomers({ customers }) {
 
       {visibleCustomers.length < customers.length && (
         <Button onClick={handleLoadMore} color="primary">
-          Get Customers
+          Load More
         </Button>
       )}
     </>
   );
 }
 
-export default ViewCustomers;
+export default DispCustomers;
 
 
 // import React, { useState } from "react";
