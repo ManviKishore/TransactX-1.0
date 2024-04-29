@@ -8,10 +8,10 @@ export const UserProvider = ({ children }) => {
   const [user, setUserState] = useState(() => {
       // const storedUser = localStorage.getItem('user');
       const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
-      return storedUser ? JSON.parse(storedUser) : null;
+      return storedUser ? JSON.parse(storedUser) : {role: 'user'};
     });
 
-  const setUser = (username, stayLoggedIn) => {
+  const setUser = (username, role, stayLoggedIn) => {
       
     if (stayLoggedIn) {
       localStorage.setItem('user', JSON.stringify(username));
@@ -20,7 +20,7 @@ export const UserProvider = ({ children }) => {
       sessionStorage.setItem('user', JSON.stringify(username));
       localStorage.removeItem('user');
     }
-    setUserState(username);
+    setUserState(username, role);
     setIsLoggedIn(true);
     };
 

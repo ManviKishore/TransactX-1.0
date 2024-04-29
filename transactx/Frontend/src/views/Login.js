@@ -46,17 +46,30 @@ const Login = () => {
       });
 
       if(response.ok){
-        const { token } = await response.json();
+        const responseData = await response.json();
+        const { token, isAdmin } = responseData;
         localStorage.setItem('token', token); 
+
+        const role = isAdmin ? 'admin' : 'user';
+        
         // setUser(data.username, stayLoggedIn);
         setUser(data.username.charAt(0).toUpperCase() + data.username.slice(1), stayLoggedIn);
+        
+        // setUser({
+        //   username: data.username.charAt(0).toUpperCase() + data.username.slice(1),
+        //   role: role
+        // }, stayLoggedIn);
+        sessionStorage.setItem('role', role);
+
         setSuccessMessage("Logged in successfully!");
+        // console.log(role);
         setData({
           username: '',
           password: '',
         });
+        
         setTimeout(() => {
-          navigate(from?.pathname || "/home", { replace: true });
+          navigate(from?.pathname || "/", { replace: true });
         }, 1000);
       
       }else{
