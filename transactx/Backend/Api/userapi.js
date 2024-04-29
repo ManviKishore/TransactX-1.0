@@ -17,7 +17,7 @@ function randomValueHex (len) {
 // User login
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    let { username, password } = req.body;
     // Find user by username
     const json_body = JSON.stringify(req.body);
 
@@ -37,7 +37,27 @@ router.post('/login', async (req, res) => {
     //const sessionId = randomValueHex(4)+"-"+randomValueHex(4)+"-"+randomValueHex(4); 
     //console.log(sessionId)
     const token = jwt.sign({ username: username}, secretKey);
-    res.json({token:token,results:results});
+
+    const userInfoString = results[0][''];
+
+  // Parsing the user_info JSON string to an object
+  const userInfo = JSON.parse(userInfoString);
+
+  // Accessing properties inside the parsed user_info object
+  const isAdmin = userInfo.user_info.isadmin;
+  const isNormalUser = userInfo.user_info.isnormaluser;
+  username = userInfo.user_info.username;
+  password = userInfo.user_info.password;
+
+  response={
+    isAdmin:isAdmin,
+    isNormalUser:isNormalUser,
+    username:username,
+    password:password,
+    token:token
+
+  }
+    res.json({response:response});
   } catch (error) {
     res.status(500).json({ lgin_pass: error.message });
   }
