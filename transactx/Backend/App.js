@@ -20,6 +20,7 @@ const getUser = require('./Api/userapi.js')
 const getAccountStats = require('./Api/useraccountstatus.js')
 const getUserduedate = require("./Api/userduedate.js")
 const getUserExpenses = require("./Api/userexpenses.js")
+const getUserLatePayments = require("./Api/userlatepayments.js")
 
 const cors = require('cors');
 app.use(cors());
@@ -41,6 +42,7 @@ app.use('',getUser)
 app.use('',getAccountStats)
 app.use('',getUserduedate)
 app.use('',getUserExpenses)
+app.use('',getUserLatePayments)
 
 module.exports = app;
 
