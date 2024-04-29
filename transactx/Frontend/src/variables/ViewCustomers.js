@@ -1,24 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input } from "reactstrap";
 var itemsPerPage = 5; // Number of items per page
-
+var indexF = 90;
 function ViewCustomers({ customers }) {
   // Number of items per page
   console.log("I'm here : ", customers);
-  // const [visibleCustomers, setVisibleCustomers] = useState(
-  //   customers.slice(1, itemsPerPage)
-  // );
-  // console.log(customers.length);
-  // if (customers.length <= 5) {
-  //   console.log(customers.length);
-  //   itemsPerPage = customers.length;
-  // }
-  // setVisibleCustomers(...customers.slice(1, itemsPerPage));
+  // const [allCustomer, setAllCustomer] = useState(customers);
+  // setAllCustomer(...customers);
+  var tempCustomers = customers;
+  if (Array.isArray(customers)) {
+    tempCustomers = customers.slice(0, itemsPerPage);
+  }
+  console.log(tempCustomers);
+  const [visibleCustomers, setVisibleCustomers] = useState(tempCustomers);
 
-  // const [currentPage, setCurrentPage] = useState(1);
-  const [visibleCustomers, setVisibleCustomers] = useState(
-    customers.slice(0, itemsPerPage)
-  );
+  useEffect(() => {
+    //setAllCustomer(customers);
+    setVisibleCustomers(tempCustomers);
+    tempCustomers = customers;
+  }, [customers]);
+
+  console.log("I'm heressss : ", visibleCustomers);
+  // if (customers.length > 0) setVisibleCustomers(...customers);
+
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleLoadMore = () => {
@@ -34,16 +38,22 @@ function ViewCustomers({ customers }) {
     <>
       {/* Table header */}
       <tbody>
-        {visibleCustomers.map(
-          (customer, index) =>
-            console.log(customer) && (
-              <tr key={index}>
-                <td>{customer.ssn}</td>
-                <td>{customer.AccountNumber}</td>
-                <td>{customer.username}</td>
-              </tr>
-            )
-        )}
+        {visibleCustomers.length > 1 &&
+          visibleCustomers.map((customer, index) => (
+            // console.log(customer) && (
+            <tr key={index}>
+              <td>{customer.ssn}</td>
+              <td>{customer.AccountNumber}</td>
+              <td>{customer.username}</td>
+            </tr>
+          ))}
+        {
+          <tr key={indexF}>
+            <td>{visibleCustomers.ssn}</td>
+            <td>{visibleCustomers.AccountNumber}</td>
+            <td>{visibleCustomers.username}</td>
+          </tr>
+        }
       </tbody>
 
       {visibleCustomers.length < customers.length && (

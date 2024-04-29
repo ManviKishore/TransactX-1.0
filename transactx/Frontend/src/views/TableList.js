@@ -80,20 +80,22 @@ function RegularTables() {
 
       let requiredRows = [];
       if (selectedTableName === "CreditCard") {
-        requiredRows = creditcards.filter((row) =>
-          row.data[column].toLowerCase().includes(value.toLowerCase())
-        );
+        requiredRows = creditcards.filter((row) => row[column] === value);
+
         console.log(requiredRows);
         setcurrentData(requiredRows);
       } else {
-        requiredRows = customers.filter(
-          (row) => row[column.toLowerCase()] == value
-        );
+        console.log(column.toLowerCase());
+        console.log(value);
+
+        if (column == "SSN") column = column.toLowerCase();
+
+        requiredRows = customers.filter((row) => row[column] === value);
         console.log("inside filter");
         console.log("prev current:", currentData.length);
         console.log(requiredRows);
 
-        setcurrentData(requiredRows);
+        setcurrentData(...requiredRows);
         console.log("updated current:", currentData.length);
       }
     }
@@ -209,9 +211,7 @@ function RegularTables() {
                         type="text"
                         // value={filterText[colIndex]}
                         placeholder={`Filter by ${col}`}
-                        onChange={(event) =>
-                          handleFilterChange(event, colIndex)
-                        }
+                        onKeyDown={(event) => handleFilterChange(event, col)}
                       />
                     ))}
                   {selectedTableName === "Person" &&
@@ -221,9 +221,7 @@ function RegularTables() {
                         type="text"
                         // value={filterText[colIndex]}
                         placeholder={`Filter by ${col}`}
-                        onChange={(event) =>
-                          handleFilterChange(event, colIndex)
-                        }
+                        onKeyDown={(event) => handleFilterChange(event, col)}
                       />
                     ))}
                 </div>

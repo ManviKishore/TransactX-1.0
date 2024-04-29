@@ -38,7 +38,7 @@ const tasks = [
 // // // table head data and table body data for Tables view
 // #############################
 
-const theadCustomer = ["SSN", "AccountNo", "Username"];
+const theadCustomer = ["SSN", "AccountNumber", "Username"];
 const theadPerson = [
   "SSN",
   "FirstName",
@@ -48,7 +48,7 @@ const theadPerson = [
   "State",
 ];
 const theadCrditCard = [
-  "AccountNo",
+  "AccountNumber",
   "CardType",
   "Annual % Rate",
   "Interest Late Payment",
