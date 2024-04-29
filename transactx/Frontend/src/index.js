@@ -24,14 +24,39 @@ import "assets/scss/now-ui-dashboard.scss?v1.5.0";
 import "assets/css/demo.css";
 
 import AdminLayout from "layouts/Admin.js";
+import Login from "views/Login";
+import { UserProvider } from "views/Auth/UseContext";
+import UserDashboard from "views/UserDashboard";
+import ProtectedRoute from "views/Auth/ProtectedRoute";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+const setUserContext = (user) => {
+  setUser(user);
+};
+
+// const role = sessionStorage.getItem("role");
+
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/admin/*" element={<AdminLayout />} />
-      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-    </Routes>
-  </BrowserRouter>
+  <UserProvider value={{ setUser: setUserContext }}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<UserDashboard />} />
+        {/* <Route 
+          path="/admin/*" 
+          element={
+            <ProtectedRoute 
+              element={<AdminLayout />} 
+              roles={['admin']} 
+            />
+          }
+        /> */}
+
+        <Route path="/admin/*" element={<AdminLayout />} />
+        
+        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+      </Routes>
+    </BrowserRouter>
+  </UserProvider>
 );
