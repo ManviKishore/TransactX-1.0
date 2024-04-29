@@ -47,24 +47,24 @@ function Sidebar(props) {
   });
   return (
     <div className="sidebar" data-color={props.backgroundColor}>
-      {/* <div className="logo">
+      <div className="logo">
         <a
           href="https://www.creative-tim.com?ref=nudr-sidebar"
           className="simple-text logo-mini"
           target="_blank"
         >
-          <div className="logo-img">
+          {/* <div className="logo-img">
             <img src={logo} alt="react-logo" />
-          </div>
+          </div> */}
         </a>
         <a
-          href="https://www.creative-tim.com?ref=nudr-sidebar"
+          href=""
           className="simple-text logo-normal"
           target="_blank"
         >
-          Creative Tim
+          TransactX
         </a>
-      </div> */}
+      </div>
       <div className="sidebar-wrapper" ref={sidebar}>
         <Nav>
           {props.routes.map((prop, key) => {
@@ -84,6 +84,13 @@ function Sidebar(props) {
               </li>
             );
           })}
+
+          <li className="active-pro">
+            <NavLink to="/login" className="nav-link">
+              <i className="now-ui-icons objects_key-25" />
+              <p>logout</p>
+            </NavLink>
+          </li>
         </Nav>
       </div>
     </div>
