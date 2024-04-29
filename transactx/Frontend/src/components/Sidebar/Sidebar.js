@@ -48,7 +48,10 @@ function Sidebar(props) {
   });
   
   const { user, role } = useContext(UserContext);
-
+  const user_ = sessionStorage.getItem('user');
+  console.log(user_);
+  const myRole = sessionStorage.getItem('role');
+  console.log(myRole);
   //useContext to logout user
   const { logout } = useContext(UserContext);
 
@@ -116,7 +119,7 @@ function Sidebar(props) {
           <NavLink to="" className="nav-link" >
                 <i className="now-ui-icons users_single-02" />
                 <p>{user}</p>
-                <p>{role}</p>
+                {/* <p>{role}</p> */}
               </NavLink>
               
           )}

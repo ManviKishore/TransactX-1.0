@@ -5,7 +5,7 @@ const sequelize = require("../sequelize");
 const bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
-router.post("/useraccount", async (req, res) => {
+router.post("/useraccountstats", async (req, res) => {
   try {
     const json_body = JSON.stringify(req.body);
 
