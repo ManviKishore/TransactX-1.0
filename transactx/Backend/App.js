@@ -17,6 +17,9 @@ const getUtilisationByCard = require('./Api/utilisationbycard.js')
 const getUpdateUserProfile = require('./Api/updateuserprofile.js')
 const getAccount = require('./Api/account.js')
 const getUser = require('./Api/userapi.js')
+const getAccountStats = require('./Api/useraccountstatus.js')
+const getUserduedate = require("./Api/userduedate.js")
+const getUserExpenses = require("./Api/userexpenses.js")
 
 const cors = require('cors');
 app.use(cors());
@@ -35,7 +38,9 @@ app.use('',getUtilisationByCard)
 app.use('',getUpdateUserProfile)
 app.use('',getAccount)
 app.use('',getUser)
-
+app.use('',getAccountStats)
+app.use('',getUserduedate)
+app.use('',getUserExpenses)
 
 module.exports = app;
 
