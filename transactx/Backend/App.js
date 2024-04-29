@@ -17,7 +17,7 @@ const getUtilisationByCard = require('./Api/utilisationbycard.js')
 const getUpdateUserProfile = require('./Api/updateuserprofile.js')
 const getAccount = require('./Api/account.js')
 const getUser = require('./Api/userapi.js')
-const getAccountStats = require('./Api/useraccountstatus.js')
+const getAccountStats = require('./Api/useraccountstats.js')
 const getUserduedate = require("./Api/userduedate.js")
 const getUserExpenses = require("./Api/userexpenses.js")
 

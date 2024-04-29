@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/Login.css';
 import UserContext from './Auth/UseContext';
-import { Typography } from '@mui/material';
+// import { Typography } from '@mui/material';
 
 const Login = () => {
     
@@ -14,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from;
-  const { setUser } = useContext(UserContext);
+  const { updateUserAndRole } = useContext(UserContext);
 
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -47,29 +47,38 @@ const Login = () => {
 
       if(response.ok){
         const responseData = await response.json();
-        const { token, isAdmin } = responseData;
+        const token = responseData.token;
+        console.log(responseData.response);
         localStorage.setItem('token', token); 
+        // console.log(responseData.response.isAdmin);
 
-        const role = isAdmin ? 'admin' : 'user';
-        
+
+        const role = responseData.response.isAdmin ? 'admin' : 'user';
+        // console.log(role);
         // setUser(data.username, stayLoggedIn);
-        setUser(data.username.charAt(0).toUpperCase() + data.username.slice(1), stayLoggedIn);
+        //setUser(data.username.charAt(0).toUpperCase() + data.username.slice(1), stayLoggedIn);
         
+        updateUserAndRole(data.username, role);
+
+
         // setUser({
         //   username: data.username.charAt(0).toUpperCase() + data.username.slice(1),
         //   role: role
         // }, stayLoggedIn);
-        sessionStorage.setItem('role', role);
+
+        // sessionStorage.setItem('role', role);
 
         setSuccessMessage("Logged in successfully!");
-        // console.log(role);
+        console.log(role);
         setData({
           username: '',
           password: '',
         });
         
+        const targetPath = role === 'admin' ? '/admin/dashboard' : '/user';
         setTimeout(() => {
-          navigate(from?.pathname || "/", { replace: true });
+          // navigate(from?.pathname || "/home", { replace: true });
+          navigate(targetPath, { replace: true });
         }, 1000);
       
       }else{
@@ -139,9 +148,9 @@ const Login = () => {
                 </button>
               </div>
             </form>
-            <Typography variant="body2" className="success-message" style={{ color: 'green', marginTop: '10px' }}>
+            {/* <Typography variant="body2" className="success-message" style={{ color: 'green', marginTop: '10px' }}>
               {successMessage}
-            </Typography>
+            </Typography> */}
             
           </div>
         </main> 
