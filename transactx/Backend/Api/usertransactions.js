@@ -14,7 +14,7 @@ router.post("/usertransactions", async (req, res) => {
       {
         replacements: {
           json_body: json_body,
-        }, // Pass JSON body as replacement
+        }, 
         type: sequelize.QueryTypes.SELECT,
       }
     );

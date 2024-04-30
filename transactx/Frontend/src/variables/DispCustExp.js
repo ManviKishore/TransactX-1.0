@@ -16,10 +16,7 @@ function DispCustExp ({ expenses }) {
     setVisibleExpenses(nextItems);
     setCurrentPage(nextPage);
   };
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-   ];
+  const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
   return (
     <>
@@ -33,16 +30,14 @@ function DispCustExp ({ expenses }) {
             </tr>
           </thead>
           <tbody>
-     
             {expenses.map(
               (expense, index) =>
-                  <tr key={index} className="text-center">
-                    <td>{index+1}</td>
-                    <td>{expense.year}</td>
-                    <td>{monthNames[expense.month -1]}</td>
-                    <td>{expense.total_expenditure}$</td>
-                  </tr>
-                // )
+                <tr key={index} className="text-center">
+                  <td>{index+1}</td>
+                  <td>{expense.year}</td>
+                  <td>{monthNames[expense.month -1]}</td>
+                  <td>{expense.total_expenditure}$</td>
+                </tr>
             )}
           </tbody>
       </Table>

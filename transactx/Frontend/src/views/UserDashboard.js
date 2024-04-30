@@ -58,6 +58,8 @@ import LineChartRed from "variables/LineChartRed";
 import UserContext from "./Auth/UseContext";
 import DispCustExp from "variables/DispCustExp";
 import { set } from "react-hook-form";
+import DispCustLatePay from "variables/DispCustLatePay";
+import DispCustTransactions from "variables/DispCustTransactions";
 
 function UserDashboard() {
   const [data, setData] = React.useState({
@@ -77,14 +79,14 @@ function UserDashboard() {
     });
   };
 
-  const [ expenditure, setExpenditure ] = useState([]);
-  const [ userExpenditure, setUserExpenditure ] = useState([]);
-  const [ userExpenditureLabels, setUserExpenditureLabels ] = useState([]);
+  const [expenditure, setExpenditure] = useState([]);
+  const [userExpenditure, setUserExpenditure] = useState([]);
+  const [userExpenditureLabels, setUserExpenditureLabels] = useState([]);
 
   useEffect(() => {
     const displayExpenses = async () => {
       try {
-        if (user) {
+        // if (user) {
           const userObject = { username: user.replace(/"/g, '') }; 
           const response = await fetch("http://localhost:4000/userexpenses", {
             method: "POST",
@@ -98,26 +100,29 @@ function UserDashboard() {
           }
           const responseData = await response.json();
           setExpenditure(responseData.results);
-
-          const labels = expenditure
+          
+          const labels = responseData.results
           .filter(item => item.month !== undefined && item.month !== null)
           .map(item => {
               const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
               return monthNames[item.month - 1];
           });
-          const avg = expenditure.map((item) => item.total_expenditure);
+          const avg = responseData.results.map((item) => item.total_expenditure);
           setUserExpenditure(avg);
           setUserExpenditureLabels(labels);
+          // console.log(userExpenditure);
+          // console.log(userExpenditureLabels);
 
-        } else {
-          console.error("User is undefined");
-        }
+        // } else {
+        //   console.error("User is undefined");
+        // }
       } catch (error) {
         console.error("Error:", error);
       }
     };
+
     displayExpenses();
-  }, [user]);
+  }, []);
   
   const [accountDets, setAccountDets] = useState([]);
 
@@ -135,7 +140,6 @@ function UserDashboard() {
           });
         
           const responseData = await response.json();
-        // console.log(responseData.results[0]);
 
         setAccountDets(responseData.results[0]);
       } catch (error) {
@@ -143,7 +147,8 @@ function UserDashboard() {
       }
     }
     getAccountStatus();
-  }, [user]);
+    // console.log(accountDets);
+  }, [5000]);
 
   const [dueDate, setDueDate] = useState([]);
   const [paymentDueDate, setPaymentDueDate] = useState([]);
@@ -162,18 +167,94 @@ function UserDashboard() {
         });
         const responseData = await response.json();
         setDueDate(responseData.results[0]);
-        console.log(responseData.results[0]);
         const dueOn = new Date(responseData.results[0].duedate).toISOString().split('T')[0];
         setPaymentDueDate(dueOn);
-        // console.log(paymentDueDate);
 
       } catch (error) {
         console.error('Error:', error);
       }
     }
     getDueDate();
-  }, [user]);
-  
+  }, [5000]);
+
+  const [userLatePayment, setUserLatePayment] = useState([]);
+  const [latePaymentLabels, setLatePaymentLabels] = useState([]);
+  const [lateData, setLateData] = useState([]);
+
+  useEffect(() => {
+    const getLatePayments = async () => {
+      try {
+        const userObject = { username: user.replace(/"/g, '') };
+        const response = await fetch("http://localhost:4000/userlatepayments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userObject),
+        });
+        const responseData = await response.json();
+        // setUserLatePayment(responseData.results);
+        // console.log(responseData.results);
+        const labels = responseData.results
+        .filter(item => item.Duedate !== undefined && item.Duedate !== null)
+        .map(item => {
+            const date = new Date(item.Duedate); 
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            const month = monthNames[date.getUTCMonth()]; 
+            const year = date.getUTCFullYear(); 
+            return `${month}-${year}`; 
+        });
+        const latePayments = responseData.results.map((item) => item.minimum_payment_due);
+        // console.log(labels);
+        setLateData(responseData.results);
+        setLatePaymentLabels(labels);
+        setUserLatePayment(latePayments);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getLatePayments();
+  }, [5000]);
+  // const handleLatePayments = (e) => {
+  //   e.preventDefault();
+  //   getLatePayments();
+  // };
+
+
+  const [transactData, setTransactData] = useState([]);
+  // useEffect(() => {
+    const viewTransactions = async () => {
+      try {
+        const userObject = { username: user.replace(/"/g, '') };
+        const response = await fetch("http://localhost:4000/usertransactions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userObject),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch");
+        }
+        const responseData = await response.json();
+        
+        const data = responseData.results;
+        setTransactData(data);
+        // console.log(transactData);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    // viewTransactions();
+    // console.log(transactData[0].amount);
+  // }, [5000]);
+
+  const handleTransactionsView = (e) => {
+    e.preventDefault();
+    viewTransactions();
+  };
+
   return (
     <>
 
@@ -241,12 +322,13 @@ function UserDashboard() {
               </CardFooter>
             </Card>
           </Col>
-                 
+
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Transactions</h5>
-                <CardTitle tag="h4">Utilisation Per Card</CardTitle>
+              
+                <h5 className="card-category">Payments</h5>
+                <CardTitle tag="h4">Missed Payments</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
@@ -254,25 +336,16 @@ function UserDashboard() {
                   >
                     <i className="now-ui-icons loader_gear" />
                   </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem>Change Year</DropdownItem>
-                    <DropdownItem>Add</DropdownItem>
-                    <DropdownItem className="text-danger">
-                      Remove data
-                    </DropdownItem>
-                  </DropdownMenu>
+    
                 </UncontrolledDropdown>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  
-                  {/* <CustFreq
-                    data={[ visaUtil, masterUtil, amexUtil ]}
-                    labels={['Visa', 'Mastercard', 'Amex']}
-                    label='Card Utilisation'
-                    // use green and orange for the bars
-                    backgroundColor={['#2CAF8F', '#2CBFF', '#2CA']}
-                  /> */}
+                  <LineChart
+                    labels={latePaymentLabels}
+                    data={userLatePayment}
+                  />
+
                 </div>
               </CardBody>
               <CardFooter>
@@ -283,7 +356,6 @@ function UserDashboard() {
               </CardFooter>
             </Card>
           </Col>
-
           <Col xs={12} md={4}>
             <Card className="card-tasks">
               <CardHeader>
@@ -438,10 +510,8 @@ function UserDashboard() {
                           >
                             View
                           </UncontrolledTooltip>
-                          
                         </td>
                       </tr>
-
                     </tbody>
                   </Table>
                 </div>
@@ -464,37 +534,36 @@ function UserDashboard() {
         </Row>
 
         <Row>
-          
-          <Col xs={12} md={6}>
-
-          <Card>
+          <Col xs={12} md={12}>
+            <Card>
               <CardHeader>
-              {/* {custValue && custValueLabels && (
-                  <Button onClick={handleSubmitExpenses} color="primary">
-                  Show Expenditure
+              {transactData && (
+                  <Button onClick={handleTransactionsView} color="primary">
+                  Show Transaction Details
                 </Button>
-                )} */}
+                )}
+
+                {/* <Button onClick={handleTransactionsView} color="primary">
+                  Show Transactions
+                </Button> */}
                 <h5 className="card-category"></h5>
-                <CardTitle tag="h4">Monthly Expenditure</CardTitle>
+                <CardTitle tag="h4">Transaction Details</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
-                  {/* <ViewCustValue 
-                    custLifeVal={custValue}
-                  /> */}
+                  <DispCustTransactions
+                    transactions={transactData}
+                  />
                 </Table>
               </CardBody>
             </Card>
           </Col>
-
-          
         </Row>
+
         <Row>
         <Col xs={12} md={12}>
-
           <Card>
             <CardHeader>
-            
               {/* {latePayments && latePaymentLabels && (
                 <Button onClick={handleLatePayments} color="primary">
                 Show Late Payments
@@ -502,24 +571,51 @@ function UserDashboard() {
               )} */}
              
               <h5 className="card-category"></h5>
-              <CardTitle tag="h4">Monthly Expenditure</CardTitle>
+              <CardTitle tag="h4">Missed Payment Details</CardTitle>
             </CardHeader>
             <CardBody>
               <Table responsive>
                   {/* <ViewLatePayments 
                     payments={lateData && lateData}
                   /> */}
-                  <DispCustExp
-                    expenses={expenditure}
-                  />
-                
+                  <DispCustLatePay
+                    payments={lateData}
+                  />  
               </Table>
             </CardBody>
           </Card>
           </Col>
-         
-          
         </Row>
+
+        <Row>
+          <Col xs={12} md={12}>
+
+            <Card>
+              <CardHeader>
+              
+                {/* {latePayments && latePaymentLabels && (
+                  <Button onClick={handleLatePayments} color="primary">
+                  Show Late Payments
+                </Button>
+                )} */}
+              
+                <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Monthly Expenditure</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                    {/* <ViewLatePayments 
+                      payments={lateData && lateData}
+                    /> */}
+                    <DispCustExp
+                      expenses={expenditure}
+                    />  
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+
     
       </div>
     </>
