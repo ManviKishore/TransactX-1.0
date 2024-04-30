@@ -3,11 +3,6 @@ import { Button, Input } from "reactstrap";
 var itemsPerPage = 5; // Number of items per page
 var indexF = 90;
 function ViewCustomers({ customers }) {
-  // Number of items per page
-<<<<<<< HEAD
-  console.log("I'm here : ", customers);
-  // const [allCustomer, setAllCustomer] = useState(customers);
-  // setAllCustomer(...customers);
   var tempCustomers = customers;
   if (Array.isArray(customers)) {
     tempCustomers = customers.slice(0, itemsPerPage);
@@ -23,18 +18,6 @@ function ViewCustomers({ customers }) {
 
   console.log("I'm heressss : ", visibleCustomers);
   // if (customers.length > 0) setVisibleCustomers(...customers);
-=======
-  // console.log("I'm here : ", customers);
-  // const [visibleCustomers, setVisibleCustomers] = useState(
-  //   customers.slice(1, itemsPerPage)
-  // );
-  // console.log(customers.length);
-  // if (customers.length <= 5) {
-  //   console.log(customers.length);
-  //   itemsPerPage = customers.length;
-  // }
-  // setVisibleCustomers(...customers.slice(1, itemsPerPage));
->>>>>>> f432b886e72e93189141c27754e4db499d90e8d0
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -51,7 +34,6 @@ function ViewCustomers({ customers }) {
     <>
       {/* Table header */}
       <tbody>
-<<<<<<< HEAD
         {visibleCustomers.length > 1 &&
           visibleCustomers.map((customer, index) => (
             // console.log(customer) && (
@@ -68,18 +50,6 @@ function ViewCustomers({ customers }) {
             <td>{visibleCustomers.username}</td>
           </tr>
         }
-=======
-        {visibleCustomers.map(
-          (customer, index) =>
-            // console.log(customer) && (
-              <tr key={index}>
-                <td>{customer.ssn}</td>
-                <td>{customer.AccountNumber}</td>
-                <td>{customer.username}</td>
-              </tr>
-            // )
-        )}
->>>>>>> f432b886e72e93189141c27754e4db499d90e8d0
       </tbody>
 
       {visibleCustomers.length < customers.length && (
@@ -92,31 +62,3 @@ function ViewCustomers({ customers }) {
 }
 
 export default ViewCustomers;
-
-
-// import React, { useState } from "react";
-
-// function ViewCustomers({ customers }) {
-//   // Number of items per page
-//   console.log("I'm here : ", customers);
-//   const [visibleCustomers, setVisibleCustomers] = useState([]);
-
-//   return (
-//     <>
-
-//       <tbody>
-//         {visibleCustomers.map((customer, index) =>
-//               <tr key={index}>
-//                 <td>{customer.ssn}</td>
-//                 <td>{customer.AccountNumber}</td>
-//                 <td>{customer.username}</td>
-//               </tr>
-
-//         )}
-//       </tbody>
-
-//     </>
-//   );
-// }
-
-// export default ViewCustomers;
