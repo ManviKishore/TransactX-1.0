@@ -30,8 +30,8 @@ import ProtectedRoute from "views/Auth/ProtectedRoute";
 
 
 function App() {
-  // const { role } = useContext(UserContext);
-
+  const { role } = useContext(UserContext);
+  console.log(role);
   // const root = ReactDOM.createRoot(document.getElementById("root"));
 
   // const setUserContext = (user) => {

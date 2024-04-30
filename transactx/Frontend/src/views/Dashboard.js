@@ -64,6 +64,9 @@ import ViewCustValue from "variables/ViewCustValue";
 import LineChartRed from "variables/LineChartRed";
 import ViewLatePayments from "variables/ViewLatePayments";
 import DispCustomers from "variables/DispCustomers";
+import { set } from "react-hook-form";
+import ViewLatePayAccounts from "variables/ViewLatePayAccounts";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [data, setData] = React.useState({
@@ -196,7 +199,7 @@ function Dashboard() {
         });
         const avg = labelsAndExpenditure.map(item => item.expenditure);
         const labels = labelsAndExpenditure.map(item => item.label);
-        // console.log(labels);
+        
           setAvgMonthExpense(avg);
           setAvgMonth(labels);
 
@@ -298,7 +301,7 @@ function Dashboard() {
         setLatePayments(late);
         setLatePaymentLabels(labels); 
         setLateData(data);    
-        console.log(labels)      
+              
       } catch (error) {
         console.error('Error:', error);
       }
@@ -310,6 +313,26 @@ function Dashboard() {
   const handleLatePayments = async (event) => {
     event.preventDefault();
   }
+
+  const [defaulters, setDefaulters] = useState([]);
+  const [viewButton, setViewButton] = useState(false);
+  const freqLatePayments = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000//missedpaymentsaccounts");
+      console.log(response.data.results[0]);
+      const data = response.data.results[0];
+      setDefaulters(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  const handleViewFreqLatePayments = async (event) => {
+    event.preventDefault();
+    freqLatePayments();
+    setViewButton(true);
+  }
+
 
   return (
     <>
@@ -716,205 +739,43 @@ function Dashboard() {
         </Row>
 
         <Row>
+          
           <Col xs={12} md={6}>
-            <Card className="card-tasks">
+            <Card>
               <CardHeader>
-                <h5 className="card-category">
-                  {" "}
-                  <IoNotificationsOutline />{" "}
-                </h5>
-                <CardTitle tag="h4">Notifications</CardTitle>
+              {defaulters && (
+                  <Button onClick={handleViewFreqLatePayments} color="primary">
+                  Show Accounts
+                </Button>
+                )}
+                <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Frequent Defaulters</CardTitle>
               </CardHeader>
               <CardBody>
-                <div className="table-full-width table-responsive">
-                  <Table>
-                    <tbody>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input defaultChecked type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">
-                          Pending transactions exceeded threshold.
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip731609871"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip731609871"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip923217206"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip923217206"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input defaultChecked type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">Late payments detected.</td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip731609871"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip731609871"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip923217206"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip923217206"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">New transactions made</td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip907509347"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip907509347"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip496353037"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip496353037"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input defaultChecked type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">User card added</td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip326247652"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip326247652"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip389516969"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip389516969"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
+                <Table responsive>
+                  <ViewLatePayAccounts
+                    payments={defaulters}
+                  />
+                  {viewButton && (
+                    <Button 
+                      className="btn-round btn-icon btn-icon-mini btn-neutral"
+                      color="info"
+                      id="tooltip731609871"
+                      type="button">
+                        <Link to="/admin/extended-tables">View</Link>
+                    </Button>
+                  )}
+                </Table>
               </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="now-ui-icons loader_refresh spin" /> 
-                  Updated 3
-                  minutes ago
-                </div>
-              </CardFooter>
             </Card>
           </Col>
+
           <Col xs={12} md={6}>
 
-          <Card>
+            <Card>
               <CardHeader>
               {custValue && custValueLabels && (
-                  <Button onClick={handleCustValue} color="primary">
+                  <Button onClick={handleCustValue} color="secondary">
                   Show Customer Value
                 </Button>
                 )}

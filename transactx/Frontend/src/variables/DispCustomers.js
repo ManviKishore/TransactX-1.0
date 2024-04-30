@@ -55,7 +55,7 @@ function DispCustomers ({ customers }) {
 
       {visibleCustomers.length < customers.length && (
         <Button onClick={handleLoadMore} color="primary">
-          Load More
+          Load
         </Button>
       )}
     </>

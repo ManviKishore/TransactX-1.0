@@ -49,17 +49,14 @@ function Sidebar(props) {
   
   const { user, role } = useContext(UserContext);
   const user_ = sessionStorage.getItem('user');
-  console.log(user_);
+  // console.log(user_);
   const myRole = sessionStorage.getItem('role');
-  console.log(myRole);
+  // console.log(myRole);
   //useContext to logout user
   const { logout } = useContext(UserContext);
 
   const handleLogout = () => {
       logout();
-      setShowPopup(true);
-      console.log("Popup shown!");
-
    };
 
   return (
