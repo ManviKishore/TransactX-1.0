@@ -117,7 +117,6 @@ function Dashboard() {
   const getCustomers = async () => {
     try {
       const response = await axios.get("http://localhost:4000/customer");
-      // console.log(response.data.results[0][0].age);
       setCustomers(response.data.results[0]);
     } catch (error) {
       console.error("Error:", error);
@@ -126,23 +125,19 @@ function Dashboard() {
 
   useEffect(() => {
     getCustomers();
-    // console.log(customers[0]);
   }, []);
 
   const [cards, setCards] = React.useState([]);
   const getCards = async () => {
     try {
       const response = await axios.get("http://localhost:4000/creditcard");
-      // console.log(response.data.results[0]);
       setCards(response.data.results[0]);
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
   useEffect(() => {
     getCards();
-    // console.log(cards[0]);
   }, []);
 
   const [openAccounts, setOpenAccounts] = React.useState([]);
@@ -152,20 +147,15 @@ function Dashboard() {
     const getClosedbyDate = async () => {
       try {
         const response = await axios.get("http://localhost:4000/byclosedate");
-        // console.log(response.data.results[0][1].cnt);
-        // setOpenAccounts(response.data.results[0][0]);
         const closedCount = response.data.results[0][0].cnt;
         const openCount = response.data.results[0][1].cnt;
         setOpenAccounts(openCount);
-        setClosedAccounts(closedCount);
-        
-        
+        setClosedAccounts(closedCount);  
       } catch (error) {
         console.error('Error:', error);
       }
     }
     getClosedbyDate();
-    // console.log(openAccounts);
   }, [3000]);
 
   const [stateCount, setStateCount] = React.useState([]);
@@ -175,13 +165,10 @@ function Dashboard() {
     const getByState = async () => {
       try {
         const response = await axios.get("http://localhost:4000/bystate");
-        // console.log(response.data.results[0]);
         const states = response.data.results[0].map((item) => item.state);
         const stateCount = response.data.results[0].map((item) => item.cnt);
         setStateCount(stateCount);
         setState(states);
-        // console.log(label);
-        // console.log(stateCount);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -196,17 +183,20 @@ function Dashboard() {
     const getAvgMonthExpense = async () => {
       try {
         const response = await axios.get("http://localhost:4000/avgmonthexpense");
-        // console.log(response.data.results[0]);
-        const avg = response.data.results[0].map((item) => item.average_amount);
-        // const labels = response.data.results[0].map((item) => item.month_transactionDate);
-        const labels = response.data.results[0]
+        // const avg = response.data.results[0].map((item) => item.average_amount);
+        const labelsAndExpenditure = response.data.results[0]
         .filter(item => item.month_transactionDate !== undefined && item.month_transactionDate !== null)
         .map(item => {
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            return monthNames[item.month_transactionDate - 1];
+            const month = monthNames[item.month_transactionDate - 1];
+            const year = item.year_transactiondate;
+            const label = `${month} ${year}`;
+            const expenditure = item.average_amount;
+            return {label, expenditure};
         });
-      
-
+        const avg = labelsAndExpenditure.map(item => item.expenditure);
+        const labels = labelsAndExpenditure.map(item => item.label);
+        // console.log(labels);
           setAvgMonthExpense(avg);
           setAvgMonth(labels);
 
@@ -215,11 +205,9 @@ function Dashboard() {
       }
     }
     getAvgMonthExpense();
-    // console.log(avgMonth);
-    // console.log(avgMonthExpense);
+   
   }, [1000]);
 
-  // const [cardsByType, setCardsByType] = useState([]);
   const [visa, setVisa] = useState([]);
   const [mastercard, setMastercard] = useState([]);
   const [amex, setAmex] = useState([]);
@@ -228,7 +216,6 @@ function Dashboard() {
     const getCardsByType = async () => {
       try {
         const response = await axios.get("http://localhost:4000/bycardtype");
-        // console.log(response.data.results[0]);
         const visaCount = response.data.results[0][0].cnt;
         const mastercardCount = response.data.results[0][1].cnt;
         const amexCount = response.data.results[0][2].cnt;
@@ -248,8 +235,8 @@ function Dashboard() {
   const getCustValue = async () => {
     try {
       const response = await axios.get("http://localhost:4000/customervalue");
-      console.log(response.data.results[0]);
-      const value = response.data.results[0]; //.map((item) => item.customerLifetimevalue);
+
+      const value = response.data.results[0];
       const labels = response.data.results[0].map((item) => item.agegroup);
       setCustValue(value);
       setCustValueLabels(labels);
@@ -294,17 +281,24 @@ function Dashboard() {
       try {
         const response = await axios.get("http://localhost:4000/latepayments");
 
-        const late = response.data.results[0].map((item) => item.cnt);
+        // const late = response.data.results[0].map((item) => item.cnt);
         const data = response.data.results[0];
         const months = response.data.results[0]
         .filter(item => item.Month_duedate !== undefined && item.Month_duedate !== null)
         .map(item => {
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            return monthNames[item.Month_duedate - 1];
+            const month = monthNames[item.Month_duedate - 1];
+            const year = item.year_duedate;
+            const label = `${month} ${year}`;
+            const payments = item.cnt
+            return {label, payments};
         });
+        const late = months.map(item => item.payments);
+        const labels = months.map(item => item.label);
         setLatePayments(late);
-        setLatePaymentLabels(months); 
-        setLateData(data);          
+        setLatePaymentLabels(labels); 
+        setLateData(data);    
+        console.log(labels)      
       } catch (error) {
         console.error('Error:', error);
       }

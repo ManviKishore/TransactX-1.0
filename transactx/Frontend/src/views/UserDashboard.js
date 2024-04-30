@@ -20,6 +20,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Line, Bar } from "react-chartjs-2";
 import { IoNotificationsOutline } from "react-icons/io5";
 import axios from "axios";
+import moment from "moment";
 
 // reactstrap components
 import {
@@ -86,7 +87,7 @@ function UserDashboard() {
   useEffect(() => {
     const displayExpenses = async () => {
       try {
-        // if (user) {
+        
           const userObject = { username: user.replace(/"/g, '') }; 
           const response = await fetch("http://localhost:4000/userexpenses", {
             method: "POST",
@@ -101,21 +102,27 @@ function UserDashboard() {
           const responseData = await response.json();
           setExpenditure(responseData.results);
           
-          const labels = responseData.results
+          const years = responseData.results.map((item) => item.year);
+          
+
+          const labelsAndExpenditure = responseData.results
           .filter(item => item.month !== undefined && item.month !== null)
           .map(item => {
               const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-              return monthNames[item.month - 1];
-          });
-          const avg = responseData.results.map((item) => item.total_expenditure);
+              const month = monthNames[item.month - 1];
+              const year = item.year;
+              const label = `${month}-${year}`;
+              const expenditure = item.total_expenditure;
+              return { label, expenditure };
+              // return monthNames[item.month - 1];
+          })
+          .sort((a, b) => moment(a.label, 'MMM-YYYY').diff(moment(b.label, 'MMM-YYYY')));
+          const labels = labelsAndExpenditure.map(item => item.label);
+          const avg = labelsAndExpenditure.map(item => item.expenditure);
+          // const avg = responseData.results.map((item) => item.total_expenditure);
           setUserExpenditure(avg);
           setUserExpenditureLabels(labels);
-          // console.log(userExpenditure);
-          // console.log(userExpenditureLabels);
-
-        // } else {
-        //   console.error("User is undefined");
-        // }
+          
       } catch (error) {
         console.error("Error:", error);
       }
@@ -147,7 +154,6 @@ function UserDashboard() {
       }
     }
     getAccountStatus();
-    // console.log(accountDets);
   }, [5000]);
 
   const [dueDate, setDueDate] = useState([]);
@@ -195,16 +201,34 @@ function UserDashboard() {
         const responseData = await response.json();
         // setUserLatePayment(responseData.results);
         // console.log(responseData.results);
-        const labels = responseData.results
-        .filter(item => item.Duedate !== undefined && item.Duedate !== null)
-        .map(item => {
+        // const labels = responseData.results
+        // .filter(item => item.Duedate !== undefined && item.Duedate !== null)
+        // .map(item => {
+        //     const date = new Date(item.Duedate); 
+        //     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        //     const month = monthNames[date.getUTCMonth()]; 
+        //     const year = date.getUTCFullYear(); 
+        //     return `${month}-${year}`; 
+        // })
+        // .sort((a, b) => moment(a, 'MMM-YYYY').diff(moment(b, 'MMM-YYYY')));
+        // console.log(labels);
+        // const latePayments = responseData.results.map((item) => item.minimum_payment_due);
+
+        const labelsAndPayments = responseData.results
+          .filter(item => item.Duedate !== undefined && item.Duedate !== null)
+          .map(item => {
             const date = new Date(item.Duedate); 
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
             const month = monthNames[date.getUTCMonth()]; 
             const year = date.getUTCFullYear(); 
-            return `${month}-${year}`; 
-        });
-        const latePayments = responseData.results.map((item) => item.minimum_payment_due);
+            const label = `${month}-${year}`;
+            const latePayment = item.minimum_payment_due; 
+            return { label, latePayment }; 
+          })
+          .sort((a, b) => moment(a.label, 'MMM-YYYY').diff(moment(b.label, 'MMM-YYYY')));
+
+        const labels = labelsAndPayments.map(item => item.label);
+        const latePayments = labelsAndPayments.map(item => item.latePayment);
         // console.log(labels);
         setLateData(responseData.results);
         setLatePaymentLabels(labels);
