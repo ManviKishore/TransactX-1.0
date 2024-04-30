@@ -16,11 +16,12 @@
 
 */
 /*eslint-disable*/
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
+import UserContext from "views/Auth/UseContext";
 
 
 var ps;
@@ -45,26 +46,42 @@ function Sidebar(props) {
       }
     };
   });
+  
+  const { user, role } = useContext(UserContext);
+  const user_ = sessionStorage.getItem('user');
+  console.log(user_);
+  const myRole = sessionStorage.getItem('role');
+  console.log(myRole);
+  //useContext to logout user
+  const { logout } = useContext(UserContext);
+
+  const handleLogout = () => {
+      logout();
+      setShowPopup(true);
+      console.log("Popup shown!");
+
+   };
+
   return (
     <div className="sidebar" data-color={props.backgroundColor}>
-      {/* <div className="logo">
+      <div className="logo">
         <a
-          href="https://www.creative-tim.com?ref=nudr-sidebar"
+          href=""
           className="simple-text logo-mini"
           target="_blank"
         >
-          <div className="logo-img">
+          {/* <div className="logo-img">
             <img src={logo} alt="react-logo" />
-          </div>
+          </div> */}
         </a>
         <a
-          href="https://www.creative-tim.com?ref=nudr-sidebar"
+          href=""
           className="simple-text logo-normal"
           target="_blank"
         >
-          Creative Tim
+          TransactX
         </a>
-      </div> */}
+      </div>
       <div className="sidebar-wrapper" ref={sidebar}>
         <Nav>
           {props.routes.map((prop, key) => {
@@ -84,6 +101,34 @@ function Sidebar(props) {
               </li>
             );
           })}
+          
+          {/* {user && (
+            <div>
+            <li className="active-pro">
+              <NavLink to="" className="nav-link" >
+                <i className="now-ui-icons users_single-02" />
+                <p>{user}</p>
+              </NavLink>
+            </li>
+            </div>
+          )} */}
+
+
+          <li className="active-pro">
+          {user && (
+          <NavLink to="" className="nav-link" >
+                <i className="now-ui-icons users_single-02" />
+                <p>{user}</p>
+                {/* <p>{role}</p> */}
+              </NavLink>
+              
+          )}
+            <NavLink to="/login" className="nav-link" onClick={handleLogout}>
+              <i className="now-ui-icons objects_key-25" />
+              <p>logout</p>
+            </NavLink>
+            
+          </li>
         </Nav>
       </div>
     </div>

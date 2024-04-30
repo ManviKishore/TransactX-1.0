@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -50,12 +50,20 @@ import {
   dashboardShippedProductsChart,
   dashboardAllProductsChart,
   dashboard24HoursPerformanceChart,
+  dashboardMonthPerformanceChart, 
 } from "variables/charts.js";
 
 import ViewCustomers from "variables/ViewCustomers";
 import ViewCards from "variables/ViewCards";
-import { dashboardMonthPerformanceChart } from "variables/charts";
 import Freq from "variables/Freq";
+import LineChart from "variables/LineChart";
+import { dashboardPanelChart2 } from "variables/charts";
+import BarChart from "variables/BarChart";
+import CustFreq from "variables/CustFreq";
+import ViewCustValue from "variables/ViewCustValue";
+import LineChartRed from "variables/LineChartRed";
+import ViewLatePayments from "variables/ViewLatePayments";
+import DispCustomers from "variables/DispCustomers";
 
 function Dashboard() {
   const [data, setData] = React.useState({
@@ -146,27 +154,189 @@ function Dashboard() {
         const response = await axios.get("http://localhost:4000/byclosedate");
         // console.log(response.data.results[0][1].cnt);
         // setOpenAccounts(response.data.results[0][0]);
-        const openCount = response.data.results[0][0].cnt;
-        const closedCount = response.data.results[0][1].cnt;
+        const closedCount = response.data.results[0][0].cnt;
+        const openCount = response.data.results[0][1].cnt;
         setOpenAccounts(openCount);
         setClosedAccounts(closedCount);
+        
+        
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
-    };
+    }
     getClosedbyDate();
-    console.log(openAccounts);
+    // console.log(openAccounts);
+  }, [3000]);
+
+  const [stateCount, setStateCount] = React.useState([]);
+  const [state, setState] = React.useState([]);
+
+  useEffect(() => {
+    const getByState = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/bystate");
+        // console.log(response.data.results[0]);
+        const states = response.data.results[0].map((item) => item.state);
+        const stateCount = response.data.results[0].map((item) => item.cnt);
+        setStateCount(stateCount);
+        setState(states);
+        // console.log(label);
+        // console.log(stateCount);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getByState();
   }, []);
+
+  const [avgMonthExpense, setAvgMonthExpense] = useState([]);
+  const [avgMonth, setAvgMonth] = useState([]);
+  
+  useEffect(() => {
+    const getAvgMonthExpense = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/avgmonthexpense");
+        // console.log(response.data.results[0]);
+        const avg = response.data.results[0].map((item) => item.average_amount);
+        // const labels = response.data.results[0].map((item) => item.month_transactionDate);
+        const labels = response.data.results[0]
+        .filter(item => item.month_transactionDate !== undefined && item.month_transactionDate !== null)
+        .map(item => {
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            return monthNames[item.month_transactionDate - 1];
+        });
+      
+
+          setAvgMonthExpense(avg);
+          setAvgMonth(labels);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getAvgMonthExpense();
+    // console.log(avgMonth);
+    // console.log(avgMonthExpense);
+  }, [1000]);
+
+  // const [cardsByType, setCardsByType] = useState([]);
+  const [visa, setVisa] = useState([]);
+  const [mastercard, setMastercard] = useState([]);
+  const [amex, setAmex] = useState([]);
+
+  useEffect(() => {
+    const getCardsByType = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/bycardtype");
+        // console.log(response.data.results[0]);
+        const visaCount = response.data.results[0][0].cnt;
+        const mastercardCount = response.data.results[0][1].cnt;
+        const amexCount = response.data.results[0][2].cnt;
+        setVisa(visaCount);
+        setMastercard(mastercardCount);
+        setAmex(amexCount);
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getCardsByType();
+  }, []);
+
+  const [custValue, setCustValue] = useState([]);
+  const [custValueLabels, setCustValueLabels] = useState([]);
+  const getCustValue = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/customervalue");
+      console.log(response.data.results[0]);
+      const value = response.data.results[0]; //.map((item) => item.customerLifetimevalue);
+      const labels = response.data.results[0].map((item) => item.agegroup);
+      setCustValue(value);
+      setCustValueLabels(labels);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  //use a button to get the customer value
+  const handleCustValue = async (event) => {
+    event.preventDefault();
+    getCustValue();
+  }
+
+  const [visaUtil, setVisaUtil] = useState([]);
+  const [masterUtil, setMasterUtil] = useState([]);
+  const [amexUtil, setAmexUtil] = useState([]);
+
+  useEffect (() => {
+    const getUtilisation = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/utilisationbycard");
+
+        const visaUtil = response.data.results[0][0].cnt;
+        const masterUtil = response.data.results[0][1].cnt;
+        const amexUtil = response.data.results[0][2].cnt;
+        setVisaUtil(visaUtil);
+        setMasterUtil(masterUtil);
+        setAmexUtil(amexUtil);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getUtilisation();
+  }, []);
+
+  const [latePayments, setLatePayments] = useState([]);
+  const [latePaymentLabels, setLatePaymentLabels] = useState([]);
+  const [lateData, setLateData] = useState([]);
+
+  useEffect(() => {
+    const getLatePayments = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/latepayments");
+
+        const late = response.data.results[0].map((item) => item.cnt);
+        const data = response.data.results[0];
+        const months = response.data.results[0]
+        .filter(item => item.Month_duedate !== undefined && item.Month_duedate !== null)
+        .map(item => {
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            return monthNames[item.Month_duedate - 1];
+        });
+        setLatePayments(late);
+        setLatePaymentLabels(months); 
+        setLateData(data);          
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    getLatePayments();
+    
+  }, []);
+
+  const handleLatePayments = async (event) => {
+    event.preventDefault();
+  }
 
   return (
     <>
-      <PanelHeader
+      {/* <PanelHeader
         size="lg"
         content={
           <Line
             data={dashboardPanelChart.data}
             options={dashboardPanelChart.options}
           />
+        }
+      /> */}
+      
+      <PanelHeader
+        size="lg"
+        content={
+          <LineChart
+            labels={avgMonth}
+            data={avgMonthExpense}
+          />
+
         }
       />
       <div className="content">
@@ -195,10 +365,15 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  {/* <Line
                     data={dashboardShippedProductsChart.data}
                     options={dashboardShippedProductsChart.options}
+                  /> */}
+                  <LineChartRed
+                    labels={latePaymentLabels}
+                    data={latePayments}
                   />
+
                 </div>
               </CardBody>
               <CardFooter>
@@ -213,7 +388,7 @@ function Dashboard() {
             <Card className="card-chart">
               <CardHeader>
                 <h5 className="card-category">Transactions</h5>
-                <CardTitle tag="h4">Transactions Per Card</CardTitle>
+                <CardTitle tag="h4">Average Monthly Expenses</CardTitle>
                 <UncontrolledDropdown>
                   <DropdownToggle
                     className="btn-round btn-outline-default btn-icon"
@@ -233,9 +408,154 @@ function Dashboard() {
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Line
+                  {/* <Line
                     data={dashboardAllProductsChart.data}
                     options={dashboardAllProductsChart.options}
+                  /> */}
+                  <LineChart 
+                    labels={avgMonth}
+                    data={avgMonthExpense}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons arrows-1_refresh-69" /> Just
+                  Updated
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+          
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Freq open={openAccounts} closed={closedAccounts} />
+                  {/* <Bar
+                    data={dashboardMonthPerformanceChart.aggregatedData}
+                    options={dashboardMonthPerformanceChart.options}
+                  /> */}
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last Year
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+        </Row>
+
+
+        <Row>
+          
+          
+          {/* <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Accounts</h5>
+                <CardTitle tag="h4">Number of Accounts</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  <Bar
+                    data={dashboard24HoursPerformanceChart.data}
+                    options={dashboard24HoursPerformanceChart.options}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons ui-2_time-alarm" /> Last 7 days
+                </div>
+              </CardFooter>
+            </Card>
+          </Col> */}
+          
+        </Row>
+
+
+        <Row>
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Customers</h5>
+                <CardTitle tag="h4">Customers By State</CardTitle>
+                <UncontrolledDropdown>
+                  <DropdownToggle
+                    className="btn-round btn-outline-default btn-icon"
+                    color="default"
+                  >
+                    <i className="now-ui-icons loader_gear" />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>View Customers</DropdownItem>
+                    <DropdownItem>Change Period</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
+                    <DropdownItem className="text-danger">
+                      Remove data
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  {/* <Line
+                    data={dashboardShippedProductsChart.data}
+                    options={dashboardShippedProductsChart.options}
+                  /> */}
+                  <BarChart
+                    labels={state}
+                    data={stateCount}
+                  />
+                </div>
+              </CardBody>
+              <CardFooter>
+                <div className="stats">
+                  <i className="now-ui-icons arrows-1_refresh-69" /> Last 1 Year
+                </div>
+              </CardFooter>
+            </Card>
+          </Col>
+          <Col xs={12} md={4}>
+            <Card className="card-chart">
+              <CardHeader>
+                <h5 className="card-category">Transactions</h5>
+                <CardTitle tag="h4">Utilisation Per Card</CardTitle>
+                <UncontrolledDropdown>
+                  <DropdownToggle
+                    className="btn-round btn-outline-default btn-icon"
+                    color="default"
+                  >
+                    <i className="now-ui-icons loader_gear" />
+                  </DropdownToggle>
+                  <DropdownMenu right>
+                    <DropdownItem>Change Year</DropdownItem>
+                    <DropdownItem>Add</DropdownItem>
+                    {/* <DropdownItem>Something else here</DropdownItem> */}
+                    <DropdownItem className="text-danger">
+                      Remove data
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
+              </CardHeader>
+              <CardBody>
+                <div className="chart-area">
+                  {/* <Line
+                    data={dashboardAllProductsChart.data}
+                    options={dashboardAllProductsChart.options}
+                  /> */}
+                  <CustFreq
+                    data={[ visaUtil, masterUtil, amexUtil ]}
+                    labels={['Visa', 'Mastercard', 'Amex']}
+                    label='Card Utilisation'
+                    // use green and orange for the bars
+                    backgroundColor={['#2CAF8F', '#2CBFF', '#2CA']}
                   />
                 </div>
               </CardBody>
@@ -271,15 +591,28 @@ function Dashboard() {
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
-                <h5 className="card-category">Accounts</h5>
-                <CardTitle tag="h4">Number of Accounts</CardTitle>
+                <h5 className="card-category">Customers</h5>
+                <CardTitle tag="h4">Customers by Card Type</CardTitle>
               </CardHeader>
               <CardBody>
                 <div className="chart-area">
-                  <Freq open={openAccounts} closed={closedAccounts} />
-                  {/* <Bar
-                    data={dashboardMonthPerformanceChart.aggregatedData}
-                    options={dashboardMonthPerformanceChart.options}
+                  <CustFreq
+                    data={[ visa, mastercard, amex ]}
+                    labels={['Visa', 'Mastercard', 'Amex']}
+                    label='Open vs Closed Account'
+                    backgroundColor={['#FF6384', '#2CA8FF', '#FFCE56']}
+                  />
+
+
+                  {/* <CustFreq 
+                    visa={visa}
+                    master={mastercard}
+                    amex={amex}
+                  /> */}
+                  {/* <LineChart
+                    label={state}
+                    data={stateCount}
+
                   /> */}
                 </div>
               </CardBody>
@@ -291,9 +624,12 @@ function Dashboard() {
             </Card>
           </Col>
         </Row>
+
+
         <Row>
-          <Col xs={12} md={6}>
-            <Card>
+          <Col xs={12} md={12}>
+
+            {/* <Card>
               <CardHeader>
                 <h5 className="card-category">Customer Table</h5>
               </CardHeader>
@@ -315,7 +651,6 @@ function Dashboard() {
                     </Input>
                   </FormGroup>
 
-                  {/* Add a select */}
                   <FormGroup>
                     <Label for="Operation">Operation</Label>
                     <Input
@@ -380,9 +715,9 @@ function Dashboard() {
 
                   <Button>Add Customer</Button>
                 </form>
-                {/* <Table responsive> */}
+               
               </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
 
@@ -573,31 +908,112 @@ function Dashboard() {
               <CardFooter>
                 <hr />
                 <div className="stats">
-                  <i className="now-ui-icons loader_refresh spin" /> Updated 3
+                  <i className="now-ui-icons loader_refresh spin" /> 
+                  Updated 3
                   minutes ago
                 </div>
               </CardFooter>
             </Card>
           </Col>
           <Col xs={12} md={6}>
+
+          <Card>
+              <CardHeader>
+              {custValue && custValueLabels && (
+                  <Button onClick={handleCustValue} color="primary">
+                  Show Customer Value
+                </Button>
+                )}
+                <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCustValue 
+                    custLifeVal={custValue}
+                  />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col>
+
+          
+        </Row>
+        <Row>
+        <Col xs={12} md={12}>
+
+          <Card>
+            <CardHeader>
+            
+              {/* {latePayments && latePaymentLabels && (
+                <Button onClick={handleLatePayments} color="primary">
+                Show Late Payments
+              </Button>
+              )} */}
+             
+              <h5 className="card-category"></h5>
+              <CardTitle tag="h4">Late Payment Details</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <Table responsive>
+                  <ViewLatePayments 
+                    payments={lateData && lateData}
+                  />
+                
+              </Table>
+            </CardBody>
+          </Card>
+          </Col>
+          {/* <Col xs={12} md={12}>
             <Card>
               <CardHeader>
-                {/* <h5 className="card-category"></h5> */}
-                <CardTitle tag="h4">Cards</CardTitle>
+              
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCards cards={custValue} />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col> */}
+
+          
+        </Row>
+        <Row>
+          {/* <Col xs={12} md={12}>
+            <Card>
+              <CardHeader>
+              
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <Table responsive>
+                  <ViewCards cards={custValue} />
+                </Table>
+              </CardBody>
+            </Card>
+          </Col> */}
+        </Row>
+        <Row>
+          <Col xs={12} md={12}>
+          {/* <Card>
+              <CardHeader>
+                {custValue && custValueLabels && (
+                  <Button onClick={handleCustValue} color="primary">
+                  Show Customer Value
+                </Button>
+                )}
+                <CardTitle tag="h4">Customer Lifetime Value</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
                   <thead className="text-primary">
                     <tr>
                       <th>Firstname</th>
-                      {/* <th>Lastname</th> */}
                       <th>Address</th>
                       <th>Age</th>
-                      {/* <th>Gender</th> */}
                       <th className="text-right">Income</th>
-                      {/* <th>SSN</th>
-                      <th>Username</th>
-                      <th>AccountNumber</th> */}
                     </tr>
                   </thead>
 
@@ -626,32 +1042,10 @@ function Dashboard() {
                       <td>Feldkirchen in Kärnten</td>
                       <td className="text-right">$63,542</td>
                     </tr>
-                    {/* <tr>
-                      <td>Mason Porter</td>
-                      <td>Chile</td>
-                      <td>Gloucester</td>
-                      <td className="text-right">$78,615</td>
-                    </tr> */}
                   </tbody>
                 </Table>
               </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={12} md={12}>
-            <Card>
-              <CardHeader>
-                {" "}
-                <h5 className="card-category"></h5>
-                <CardTitle tag="h4">Cards</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Table responsive>
-                  <ViewCards cards={cards} />
-                </Table>
-              </CardBody>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
 
@@ -660,7 +1054,7 @@ function Dashboard() {
             <Card>
               <CardHeader>
                 {/* <h5 className="card-category"></h5> */}
-                <CardTitle tag="h4">Customer Details</CardTitle>
+                <CardTitle tag="h4">All Customers</CardTitle>
               </CardHeader>
               <CardBody>
                 <Table responsive>
@@ -671,15 +1065,15 @@ function Dashboard() {
                       <th>Age</th>
                       <th>Address</th>
                       <th className="text-right">Income</th>
-                      <th>SSN</th>
+                      {/* <th>SSN</th> */}
                       <th>Gender</th>
                       <th>Username</th>
                       <th>AccountNumber</th>
                     </tr>
                   </thead>
-                  <td>
-                    <ViewCustomers customers={customers} />
-                  </td>
+                  {/* <td> */}
+                    <DispCustomers customers={customers} />
+                  {/* </td> */}
                 </Table>
               </CardBody>
             </Card>

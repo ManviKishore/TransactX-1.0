@@ -1,29 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Input } from "reactstrap";
 var itemsPerPage = 5; // Number of items per page
-var indexF = 90;
-function ViewCustomers({ customers }) {
+
+function DispCustomers ({ customers }) {
   // Number of items per page
-<<<<<<< HEAD
-  console.log("I'm here : ", customers);
-  // const [allCustomer, setAllCustomer] = useState(customers);
-  // setAllCustomer(...customers);
-  var tempCustomers = customers;
-  if (Array.isArray(customers)) {
-    tempCustomers = customers.slice(0, itemsPerPage);
-  }
-  console.log(tempCustomers);
-  const [visibleCustomers, setVisibleCustomers] = useState(tempCustomers);
-
-  useEffect(() => {
-    //setAllCustomer(customers);
-    setVisibleCustomers(tempCustomers);
-    tempCustomers = customers;
-  }, [customers]);
-
-  console.log("I'm heressss : ", visibleCustomers);
-  // if (customers.length > 0) setVisibleCustomers(...customers);
-=======
   // console.log("I'm here : ", customers);
   // const [visibleCustomers, setVisibleCustomers] = useState(
   //   customers.slice(1, itemsPerPage)
@@ -34,8 +14,11 @@ function ViewCustomers({ customers }) {
   //   itemsPerPage = customers.length;
   // }
   // setVisibleCustomers(...customers.slice(1, itemsPerPage));
->>>>>>> f432b886e72e93189141c27754e4db499d90e8d0
 
+  // const [currentPage, setCurrentPage] = useState(1);
+  const [visibleCustomers, setVisibleCustomers] = useState(
+    customers.slice(0, itemsPerPage)
+  );
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleLoadMore = () => {
@@ -51,47 +34,35 @@ function ViewCustomers({ customers }) {
     <>
       {/* Table header */}
       <tbody>
-<<<<<<< HEAD
-        {visibleCustomers.length > 1 &&
-          visibleCustomers.map((customer, index) => (
-            // console.log(customer) && (
-            <tr key={index}>
-              <td>{customer.ssn}</td>
-              <td>{customer.AccountNumber}</td>
-              <td>{customer.username}</td>
-            </tr>
-          ))}
-        {
-          <tr key={indexF}>
-            <td>{visibleCustomers.ssn}</td>
-            <td>{visibleCustomers.AccountNumber}</td>
-            <td>{visibleCustomers.username}</td>
-          </tr>
-        }
-=======
         {visibleCustomers.map(
           (customer, index) =>
             // console.log(customer) && (
               <tr key={index}>
-                <td>{customer.ssn}</td>
-                <td>{customer.AccountNumber}</td>
+                         
+                <td>{customer.firstname}</td>
+                <td>{customer.Lastname}</td>
+                <td className="text-center">{customer.age}</td>
+                <td>{`${customer.city}, ${customer.state}`}</td>
+                <td className="text-center">{customer.monthly_income}</td>
+                {/* <td>{customer.ssn}</td> */}
+                <td>{customer.gender}</td>
                 <td>{customer.username}</td>
+                <td className="text-center">{customer.AccountNumber}</td>
               </tr>
             // )
         )}
->>>>>>> f432b886e72e93189141c27754e4db499d90e8d0
       </tbody>
 
       {visibleCustomers.length < customers.length && (
         <Button onClick={handleLoadMore} color="primary">
-          Get Customers
+          Load More
         </Button>
       )}
     </>
   );
 }
 
-export default ViewCustomers;
+export default DispCustomers;
 
 
 // import React, { useState } from "react";
