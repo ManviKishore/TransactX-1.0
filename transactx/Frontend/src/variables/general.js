@@ -50,39 +50,19 @@ const theadPerson = [
 const theadCrditCard = [
   "AccountNumber",
   "CardType",
-  "Annual % Rate",
-  "Interest Late Payment",
+  "Annual_%_Rate",
+  "Interest_Late_Payment",
   "Masked_cred_num",
 ];
-const tbody = [
-  {
-    className: "table-success",
-    data: ["Dakota Rice", "Niger", "Oud-Turnhout", "$36,738"],
-  },
-  {
-    className: "",
-    data: ["Minerva Hooper", "Curaçao", "Sinaai-Waas", "$23,789"],
-  },
-  {
-    className: "table-info",
-    data: ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
-  },
-  {
-    className: "",
-    data: ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
-  },
-  {
-    className: "table-danger",
-    data: ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
-  },
-  { className: "", data: ["Mason Porter", "Chile", "Gloucester", "$78,615"] },
-  {
-    className: "table-warning",
-    data: ["Jon Porter", "Portugal", "Gloucester", "$98,615"],
-  },
+const saveCreditHead = [
+  "AccountNumber",
+  "CardNum",
+  "CardType",
+  "Annual_%_Rate",
+  "Interest_Late_Payment",
 ];
 
 // tasks list for Tasks card in Dashboard view
 // data for <thead> of table in TableList view
 // data for <tbody> of table in TableList view
-export { tasks, theadCustomer, theadCrditCard, tbody, theadPerson };
+export { tasks, theadCustomer, theadCrditCard, saveCreditHead, theadPerson };

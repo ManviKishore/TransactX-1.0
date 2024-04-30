@@ -18,7 +18,7 @@ import PanelHeader from "components/PanelHeader/PanelHeader.js";
 import {
   theadCrditCard,
   theadCustomer,
-  tbody,
+  saveCreditHead,
   theadPerson,
 } from "variables/general";
 import ViewCustomers from "variables/ViewCustomers";
@@ -30,6 +30,7 @@ function RegularTables() {
   const [customers, setCustomers] = React.useState([]);
   const [creditcards, setCreditcards] = React.useState([]);
   const [currentData, setcurrentData] = React.useState([]);
+  const [ssn, setSSN] = React.useState([]);
 
   const {
     register,
@@ -37,15 +38,12 @@ function RegularTables() {
     formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
   } = useForm();
 
-  const [filterText, setFilterText] = useState(
-    Array(theadCustomer.length).fill("")
-  );
   const [selectedTableName, setSelectedTableName] = useState("Customer");
 
   const handleTableSelect = (tableName) => {
     setSelectedTableName(tableName);
     // Reset filter and table data when switching tables
-    setFilterText(Array(theadCustomer.length).fill(""));
+    // setFilterText(Array(theadCustomer.length).fill(""));
     if (tableName === "Customer") {
       setTableData(theadCustomer);
       setcurrentData(customers);
@@ -56,6 +54,18 @@ function RegularTables() {
       setTableData(theadPerson);
       setcurrentData(customers);
     }
+  };
+  const handleDelete = (event) => {
+    const inputssn = ssn;
+    var row = {
+      Tablename: selectedTableName,
+      Operation: "Delete",
+      data: {
+        ssn: inputssn,
+      },
+    };
+
+    console.log(row);
   };
   const getCustomers = async () => {
     try {
@@ -72,6 +82,16 @@ function RegularTables() {
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+  const saveRows = async () => {
+    axios
+      .post("http://localhost:4000/tableops", rowData)
+      .then((response) => {
+        console.log("Response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleFilterChange = (event, column) => {
@@ -106,7 +126,14 @@ function RegularTables() {
     getCreditCards();
   }, [selectedTableName]);
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    var row = {
+      Tablename: selectedTableName,
+      Operation: "Add",
+      data,
+    };
+    console.log(row);
+  };
 
   return (
     <>
@@ -146,9 +173,20 @@ function RegularTables() {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <Table responsive>
                     <tr style={{ alignItems: "center" }}>
-                      {(selectedTableName === "Customer" ||
-                        selectedTableName === "CreditCard") &&
+                      {selectedTableName === "Customer" &&
                         tableData.map((col, colIndex) => (
+                          <td>
+                            <input
+                              {...register(col)}
+                              type="text"
+                              //  name={`col-${colIndex}`} // Unique name for each input
+                              placeholder={col}
+                              // value={col} // Use form data if available, otherwise use initial value
+                            />
+                          </td>
+                        ))}
+                      {selectedTableName === "CreditCard" &&
+                        saveCreditHead.map((col, colIndex) => (
                           <td>
                             <input
                               {...register(col)}
@@ -264,10 +302,14 @@ function RegularTables() {
                     type="text"
                     // value={userToDelete}
                     placeholder={`Enter SSN`}
-                    // onChange={(event) => handleFilterChange(event, colIndex)}
+                    onChange={(event) => setSSN(event.target.value)}
                   />
                 </CardHeader>
-                <Button color="primary" style={{ marginLeft: "1rem" }}>
+                <Button
+                  color="primary"
+                  style={{ marginLeft: "1rem" }}
+                  onClick={(event) => handleDelete(event)}
+                >
                   Delete
                 </Button>
                 <CardBody></CardBody>

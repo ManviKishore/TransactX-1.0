@@ -10,7 +10,7 @@ router.get("/creditcard", async (req, res) => {
 
     // Execute the stored procedure with the JSON body as a parameter
     const results = await sequelize.query(
-      "Select AccountNumber,CardType,Annual_Percentage_Rate,InterestLatePayment,id,Masked_cred_num from CreditCard"
+      "Select CardNum,AccountNumber,CardType,Annual_Percentage_Rate,InterestLatePayment,id,Masked_cred_num from CreditCard"
     );
     console.log("Results:", results);
 
