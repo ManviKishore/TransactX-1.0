@@ -271,7 +271,7 @@ function Dashboard() {
     const getUtilisation = async () => {
       try {
         const response = await axios.get("http://localhost:4000/utilisationbycard");
-        // console.log(response.data.results[0]);
+
         const visaUtil = response.data.results[0][0].cnt;
         const masterUtil = response.data.results[0][1].cnt;
         const amexUtil = response.data.results[0][2].cnt;
@@ -293,7 +293,7 @@ function Dashboard() {
     const getLatePayments = async () => {
       try {
         const response = await axios.get("http://localhost:4000/latepayments");
-        // console.log(response.data.results[0][1].Month_duedate);
+
         const late = response.data.results[0].map((item) => item.cnt);
         const data = response.data.results[0];
         const months = response.data.results[0]
@@ -304,8 +304,7 @@ function Dashboard() {
         });
         setLatePayments(late);
         setLatePaymentLabels(months); 
-        setLateData(data);
-        // console.log(lateData[0].year_duedate);             
+        setLateData(data);          
       } catch (error) {
         console.error('Error:', error);
       }
@@ -316,7 +315,6 @@ function Dashboard() {
 
   const handleLatePayments = async (event) => {
     event.preventDefault();
-
   }
 
   return (
@@ -330,15 +328,7 @@ function Dashboard() {
           />
         }
       /> */}
-      {/* <PanelHeader
-        size="lg"
-        content={
-          <Line
-            data={dashboardPanelChart2.data}
-            options={dashboardPanelChart2.options}
-          />
-        }
-      /> */}
+      
       <PanelHeader
         size="lg"
         content={
@@ -436,27 +426,7 @@ function Dashboard() {
               </CardFooter>
             </Card>
           </Col>
-          {/* <Col xs={12} md={4}>
-            <Card className="card-chart">
-              <CardHeader>
-                <h5 className="card-category">Accounts</h5>
-                <CardTitle tag="h4">Number of Accounts</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="chart-area">
-                  <Bar
-                    data={dashboard24HoursPerformanceChart.data}
-                    options={dashboard24HoursPerformanceChart.options}
-                  />
-                </div>
-              </CardBody>
-              <CardFooter>
-                <div className="stats">
-                  <i className="now-ui-icons ui-2_time-alarm" /> Last 7 days
-                </div>
-              </CardFooter>
-            </Card>
-          </Col> */}
+          
           <Col xs={12} md={4}>
             <Card className="card-chart">
               <CardHeader>
