@@ -35,12 +35,14 @@ function RegularTables() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
   } = useForm();
 
   const [selectedTableName, setSelectedTableName] = useState("Customer");
 
   const handleTableSelect = (tableName) => {
+    reset();
     setSelectedTableName(tableName);
     // Reset filter and table data when switching tables
     // setFilterText(Array(theadCustomer.length).fill(""));
@@ -83,7 +85,7 @@ function RegularTables() {
       console.error("Error:", error);
     }
   };
-  const saveRows = async () => {
+  const saveRows = async (rowData) => {
     axios
       .post("http://localhost:4000/tableops", rowData)
       .then((response) => {
@@ -126,13 +128,15 @@ function RegularTables() {
     getCreditCards();
   }, [selectedTableName]);
 
-  const onSubmit = (data) => {
-    var row = {
+  const onSubmit = (subDataCC) => {
+    const data = subDataCC;
+    const row = {
       Tablename: selectedTableName,
       Operation: "Add",
       data,
     };
-    console.log(row);
+    saveRows(row);
+    reset();
   };
 
   return (
@@ -174,25 +178,25 @@ function RegularTables() {
                   <Table responsive>
                     <tr style={{ alignItems: "center" }}>
                       {selectedTableName === "Customer" &&
-                        tableData.map((col, colIndex) => (
+                        tableData.map((column, colIndex) => (
                           <td>
                             <input
-                              {...register(col)}
+                              {...register(column)}
                               type="text"
-                              //  name={`col-${colIndex}`} // Unique name for each input
-                              placeholder={col}
+                              //name={`col-${colIndex}`} // Unique name for each input
+                              placeholder={column}
                               // value={col} // Use form data if available, otherwise use initial value
                             />
                           </td>
                         ))}
                       {selectedTableName === "CreditCard" &&
-                        saveCreditHead.map((col, colIndex) => (
+                        saveCreditHead.map((columcc, colIndex) => (
                           <td>
                             <input
-                              {...register(col)}
+                              {...register(columcc)}
                               type="text"
-                              //  name={`col-${colIndex}`} // Unique name for each input
-                              placeholder={col}
+                              //name={`col-${colIndex}`} // Unique name for each input
+                              placeholder={columcc}
                               // value={col} // Use form data if available, otherwise use initial value
                             />
                           </td>

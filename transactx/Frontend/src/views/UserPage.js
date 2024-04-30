@@ -29,13 +29,18 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import image_profile from '../assets/img/bg5.jpg'
+import image_profile from "../assets/img/bg5.jpg";
 // core components
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function User() {
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    const formData = new FormData(event.target); // Create a new FormData object with form data
+    const data = Object.fromEntries(formData.entries()); // Convert FormData to plain object
 
-
+    console.log("Form data:", data); // Log the form data
+  };
   return (
     <>
       <PanelHeader size="sm" />
@@ -47,35 +52,16 @@ function User() {
                 <h5 className="title">Edit Profile</h5>
               </CardHeader>
               <CardBody>
-                <Form>
-                  <Row>
-                    <Col className="px-1" md="3">
-                      <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue="michael23"
-                          placeholder="Username"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">
-                          Email address
-                        </label>
-                        <Input placeholder="Email" type="email" />
-                      </FormGroup>
-                    </Col>
-                  </Row>
+                <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col className="pr-1" md="6">
                       <FormGroup>
                         <label>First Name</label>
                         <Input
                           defaultValue="Mike"
-                          placeholder="Company"
+                          placeholder="First Name"
                           type="text"
+                          name="firstName"
                         />
                       </FormGroup>
                     </Col>
@@ -86,53 +72,36 @@ function User() {
                           defaultValue="Andrew"
                           placeholder="Last Name"
                           type="text"
+                          name="lastName"
                         />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col md="12">
+                    <Col className="pr-1" md="6">
                       <FormGroup>
-                        <label>Address</label>
+                        <label>Username</label>
                         <Input
-                          defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                          placeholder="Home Address"
+                          defaultValue="michael23"
+                          placeholder="Username"
                           type="text"
+                          name="username"
                         />
                       </FormGroup>
                     </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="4">
+                    <Col className="pl-1" md="6">
                       <FormGroup>
-                        <label>City</label>
-                        <Input
-                          defaultValue="Mike"
-                          placeholder="City"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-1" md="4">
-                      <FormGroup>
-                        <label>Country</label>
+                        <label>Password</label>
                         <Input
                           defaultValue="Andrew"
-                          placeholder="Country"
-                          type="text"
+                          placeholder="Password"
+                          type="password"
+                          name="password"
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label>Postal Code</label>
-                        <Input placeholder="ZIP Code" type="number" />
-                      </FormGroup>
-                    </Col>
                   </Row>
-
                   <Button type="submit">Submit</Button>
-                  
                 </Form>
               </CardBody>
             </Card>
