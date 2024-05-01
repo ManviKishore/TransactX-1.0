@@ -38,7 +38,7 @@ const tasks = [
 // // // table head data and table body data for Tables view
 // #############################
 
-const theadCustomer = ["SSN", "AccountNumber", "Username"];
+const theadCustomer = ["ssn", "AccountNumber", "Username"];
 const theadPerson = [
   "SSN",
   "FirstName",

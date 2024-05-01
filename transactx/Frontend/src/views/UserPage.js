@@ -44,8 +44,9 @@ function User() {
   const [existingDetails, setExistingDetails] = useState();
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
+  const [account, setAccount] = useState("ACC0000002");
   const updateUser = async (data) => {
+    console.log(data);
     axios
       .post("http://localhost:4000/userprofile", data)
       .then((response) => {
@@ -56,31 +57,51 @@ function User() {
       });
   };
   const handleSubmit = (event) => {
+    // getUserDetails(user);
+    // console.log("newpass", newPassword);
     event.preventDefault(); // Prevent the default form submission behavior
     const formData = new FormData(event.target); // Create a new FormData object with form data
     const data = Object.fromEntries(formData.entries());
     // Convert FormData to plain object
-    var updateData = {
-      username: data.username,
-      changedusername: newUsername,
-      changedpassword: newPassword,
-    };
-    updateUser(updateData);
+    // if (data.changedusername == "") {
+    //   newUsername = user;
+    // }
+    // const reqPass = data.changedpassword;
+    // if (data.changedpassword == "") {
+    //   reqPass = newPassword;
+    // }
+    // var updateData = {
+    //   username: user,
+    //   changedusername: newUsername,
+    //   changedpassword: reqPass,
+    // };
+    updateUser(data);
 
-    if (data.username != n) console.log("Form data:", data); // Log the form data
+    // if (data.username != n) console.log("Form data:", data); // Log the form data
   };
-  const getUserDetails = async (username) => {
-    axios
-      .post("http://localhost:4000/tableops", username)
-      .then((response) => {
-        console.log("Response:", response.data);
-        setNewPassword(response.password);
-        setNewUsername(response.username);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+  // const getUserDetails = async (uname) => {
+  //   console.log(uname);
+  //   const data = {
+  //     username: uname,
+  //   };
+  //   console.log(data);
+  //   axios
+  //     .post("http://localhost:4000/userdetails", data)
+  //     .then((response) => {
+  //       console.log("Response:", response.data.results);
+  //       const extracted_res = response.data.results;
+  //       setNewPassword(extracted_res[0].Password);
+
+  //       console.log(newPassword);
+  //       setNewUsername(...uname);
+  //       setAccount(extracted_res[0].AccountNumber);
+  //       console.log("password :", extracted_res[0].AccountNumber);
+  //       console.log("account :", account);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // };
   return (
     <>
       <PanelHeader size="sm" />
@@ -102,7 +123,7 @@ function User() {
                           placeholder="Username"
                           type="text"
                           name="username"
-                          readonly
+                          readOnly
                         />
                       </FormGroup>
                     </Col>
@@ -110,10 +131,10 @@ function User() {
                       <FormGroup style={{ border: "0rem" }}>
                         <label>Primary AccountNo</label>
                         <Input
-                          defaultValue="ACC0000002"
+                          defaultValue={account}
                           placeholder="text"
                           type="text"
-                          readonly
+                          readOnly
                         />
                       </FormGroup>
                     </Col>
@@ -124,12 +145,10 @@ function User() {
                         <FormGroup style={{ border: "0rem" }}>
                           <label>Update Username</label>
                           <Input
+                            defaultValue={user}
                             placeholder="New Username"
                             type="text"
                             name="changedusername"
-                            onChange={(event) => {
-                              setNewUsername(event.target.value);
-                            }}
                           />
                         </FormGroup>
                       </Col>
@@ -144,9 +163,6 @@ function User() {
                             placeholder="New Password"
                             type="password"
                             name="changedpassword"
-                            onChange={(event) => {
-                              setNewPassword(event.target.value);
-                            }}
                           />
                         </FormGroup>
                       </Col>

@@ -111,7 +111,7 @@ function RegularTables() {
         console.log(column.toLowerCase());
         console.log(value);
 
-        if (column == "SSN") column = column.toLowerCase();
+        if (column === "SSN") column = column.toLowerCase();
 
         requiredRows = customers.filter((row) => row[column] === value);
         console.log("inside filter");
