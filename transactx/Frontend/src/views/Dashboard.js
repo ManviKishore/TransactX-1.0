@@ -64,6 +64,9 @@ import ViewCustValue from "variables/ViewCustValue";
 import LineChartRed from "variables/LineChartRed";
 import ViewLatePayments from "variables/ViewLatePayments";
 import DispCustomers from "variables/DispCustomers";
+import { set } from "react-hook-form";
+import ViewLatePayAccounts from "variables/ViewLatePayAccounts";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
   const [data, setData] = React.useState({
@@ -117,7 +120,6 @@ function Dashboard() {
   const getCustomers = async () => {
     try {
       const response = await axios.get("http://localhost:4000/customer");
-      // console.log(response.data.results[0][0].age);
       setCustomers(response.data.results[0]);
     } catch (error) {
       console.error("Error:", error);
@@ -126,23 +128,19 @@ function Dashboard() {
 
   useEffect(() => {
     getCustomers();
-    // console.log(customers[0]);
   }, []);
 
   const [cards, setCards] = React.useState([]);
   const getCards = async () => {
     try {
       const response = await axios.get("http://localhost:4000/creditcard");
-      // console.log(response.data.results[0]);
       setCards(response.data.results[0]);
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
   useEffect(() => {
     getCards();
-    // console.log(cards[0]);
   }, []);
 
   const [openAccounts, setOpenAccounts] = React.useState([]);
@@ -152,20 +150,15 @@ function Dashboard() {
     const getClosedbyDate = async () => {
       try {
         const response = await axios.get("http://localhost:4000/byclosedate");
-        // console.log(response.data.results[0][1].cnt);
-        // setOpenAccounts(response.data.results[0][0]);
         const closedCount = response.data.results[0][0].cnt;
         const openCount = response.data.results[0][1].cnt;
         setOpenAccounts(openCount);
-        setClosedAccounts(closedCount);
-        
-        
+        setClosedAccounts(closedCount);  
       } catch (error) {
         console.error('Error:', error);
       }
     }
     getClosedbyDate();
-    // console.log(openAccounts);
   }, [3000]);
 
   const [stateCount, setStateCount] = React.useState([]);
@@ -175,13 +168,10 @@ function Dashboard() {
     const getByState = async () => {
       try {
         const response = await axios.get("http://localhost:4000/bystate");
-        // console.log(response.data.results[0]);
         const states = response.data.results[0].map((item) => item.state);
         const stateCount = response.data.results[0].map((item) => item.cnt);
         setStateCount(stateCount);
         setState(states);
-        // console.log(label);
-        // console.log(stateCount);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -196,17 +186,20 @@ function Dashboard() {
     const getAvgMonthExpense = async () => {
       try {
         const response = await axios.get("http://localhost:4000/avgmonthexpense");
-        // console.log(response.data.results[0]);
-        const avg = response.data.results[0].map((item) => item.average_amount);
-        // const labels = response.data.results[0].map((item) => item.month_transactionDate);
-        const labels = response.data.results[0]
+        // const avg = response.data.results[0].map((item) => item.average_amount);
+        const labelsAndExpenditure = response.data.results[0]
         .filter(item => item.month_transactionDate !== undefined && item.month_transactionDate !== null)
         .map(item => {
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            return monthNames[item.month_transactionDate - 1];
+            const month = monthNames[item.month_transactionDate - 1];
+            const year = item.year_transactiondate;
+            const label = `${month} ${year}`;
+            const expenditure = item.average_amount;
+            return {label, expenditure};
         });
-      
-
+        const avg = labelsAndExpenditure.map(item => item.expenditure);
+        const labels = labelsAndExpenditure.map(item => item.label);
+        
           setAvgMonthExpense(avg);
           setAvgMonth(labels);
 
@@ -215,11 +208,9 @@ function Dashboard() {
       }
     }
     getAvgMonthExpense();
-    // console.log(avgMonth);
-    // console.log(avgMonthExpense);
+   
   }, [1000]);
 
-  // const [cardsByType, setCardsByType] = useState([]);
   const [visa, setVisa] = useState([]);
   const [mastercard, setMastercard] = useState([]);
   const [amex, setAmex] = useState([]);
@@ -228,7 +219,6 @@ function Dashboard() {
     const getCardsByType = async () => {
       try {
         const response = await axios.get("http://localhost:4000/bycardtype");
-        // console.log(response.data.results[0]);
         const visaCount = response.data.results[0][0].cnt;
         const mastercardCount = response.data.results[0][1].cnt;
         const amexCount = response.data.results[0][2].cnt;
@@ -248,8 +238,8 @@ function Dashboard() {
   const getCustValue = async () => {
     try {
       const response = await axios.get("http://localhost:4000/customervalue");
-      console.log(response.data.results[0]);
-      const value = response.data.results[0]; //.map((item) => item.customerLifetimevalue);
+
+      const value = response.data.results[0];
       const labels = response.data.results[0].map((item) => item.agegroup);
       setCustValue(value);
       setCustValueLabels(labels);
@@ -294,17 +284,24 @@ function Dashboard() {
       try {
         const response = await axios.get("http://localhost:4000/latepayments");
 
-        const late = response.data.results[0].map((item) => item.cnt);
+        // const late = response.data.results[0].map((item) => item.cnt);
         const data = response.data.results[0];
         const months = response.data.results[0]
         .filter(item => item.Month_duedate !== undefined && item.Month_duedate !== null)
         .map(item => {
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-            return monthNames[item.Month_duedate - 1];
+            const month = monthNames[item.Month_duedate - 1];
+            const year = item.year_duedate;
+            const label = `${month} ${year}`;
+            const payments = item.cnt
+            return {label, payments};
         });
+        const late = months.map(item => item.payments);
+        const labels = months.map(item => item.label);
         setLatePayments(late);
-        setLatePaymentLabels(months); 
-        setLateData(data);          
+        setLatePaymentLabels(labels); 
+        setLateData(data);    
+              
       } catch (error) {
         console.error('Error:', error);
       }
@@ -316,6 +313,26 @@ function Dashboard() {
   const handleLatePayments = async (event) => {
     event.preventDefault();
   }
+
+  const [defaulters, setDefaulters] = useState([]);
+  const [viewButton, setViewButton] = useState(false);
+  const freqLatePayments = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000//missedpaymentsaccounts");
+      console.log(response.data.results[0]);
+      const data = response.data.results[0];
+      setDefaulters(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  const handleViewFreqLatePayments = async (event) => {
+    event.preventDefault();
+    freqLatePayments();
+    setViewButton(true);
+  }
+
 
   return (
     <>
@@ -722,205 +739,43 @@ function Dashboard() {
         </Row>
 
         <Row>
+          
           <Col xs={12} md={6}>
-            <Card className="card-tasks">
+            <Card>
               <CardHeader>
-                <h5 className="card-category">
-                  {" "}
-                  <IoNotificationsOutline />{" "}
-                </h5>
-                <CardTitle tag="h4">Notifications</CardTitle>
+              {defaulters && (
+                  <Button onClick={handleViewFreqLatePayments} color="primary">
+                  Show Accounts
+                </Button>
+                )}
+                <h5 className="card-category"></h5>
+                <CardTitle tag="h4">Frequent Defaulters</CardTitle>
               </CardHeader>
               <CardBody>
-                <div className="table-full-width table-responsive">
-                  <Table>
-                    <tbody>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input defaultChecked type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">
-                          Pending transactions exceeded threshold.
-                        </td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip731609871"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip731609871"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip923217206"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip923217206"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input defaultChecked type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">Late payments detected.</td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip731609871"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip731609871"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip923217206"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip923217206"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">New transactions made</td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip907509347"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip907509347"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip496353037"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip496353037"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          {/* <FormGroup check>
-                            <Label check>
-                              <Input defaultChecked type="checkbox" />
-                              <span className="form-check-sign" />
-                            </Label>
-                          </FormGroup> */}
-                        </td>
-                        <td className="text-left">User card added</td>
-                        <td className="td-actions text-right">
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="info"
-                            id="tooltip326247652"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-2_settings-90" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip326247652"
-                          >
-                            View
-                          </UncontrolledTooltip>
-                          <Button
-                            className="btn-round btn-icon btn-icon-mini btn-neutral"
-                            color="danger"
-                            id="tooltip389516969"
-                            type="button"
-                          >
-                            <i className="now-ui-icons ui-1_simple-remove" />
-                          </Button>
-                          <UncontrolledTooltip
-                            delay={0}
-                            target="tooltip389516969"
-                          >
-                            Remove
-                          </UncontrolledTooltip>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </div>
+                <Table responsive>
+                  <ViewLatePayAccounts
+                    payments={defaulters}
+                  />
+                  {viewButton && (
+                    <Button 
+                      className="btn-round btn-icon btn-icon-mini btn-neutral"
+                      color="info"
+                      id="tooltip731609871"
+                      type="button">
+                        <Link to="/admin/extended-tables">View</Link>
+                    </Button>
+                  )}
+                </Table>
               </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="now-ui-icons loader_refresh spin" /> 
-                  Updated 3
-                  minutes ago
-                </div>
-              </CardFooter>
             </Card>
           </Col>
+
           <Col xs={12} md={6}>
 
-          <Card>
+            <Card>
               <CardHeader>
               {custValue && custValueLabels && (
-                  <Button onClick={handleCustValue} color="primary">
+                  <Button onClick={handleCustValue} color="secondary">
                   Show Customer Value
                 </Button>
                 )}
