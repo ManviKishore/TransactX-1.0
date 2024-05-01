@@ -18,7 +18,7 @@
 /*eslint-disable*/
 import React, { useContext } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Nav } from "reactstrap";
+import { Button, Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 import UserContext from "views/Auth/UseContext";
@@ -123,6 +123,8 @@ function Sidebar(props) {
               <i className="now-ui-icons objects_key-25" />
               <p>logout</p>
             </NavLink>
+
+            
             
           </li>
         </Nav>

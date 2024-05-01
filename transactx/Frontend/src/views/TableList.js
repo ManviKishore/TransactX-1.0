@@ -90,7 +90,7 @@ function RegularTables() {
     axios
       .post("http://localhost:4000/tableops", rowData)
       .then((response) => {
-        console.log("Response:", response.data);
+        // console.log("Response:", response.data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -108,18 +108,18 @@ function RegularTables() {
         console.log(requiredRows);
         setcurrentData(requiredRows);
       } else {
-        console.log(column.toLowerCase());
-        console.log(value);
+        // console.log(column.toLowerCase());
+        // console.log(value);
 
         if (column === "SSN") column = column.toLowerCase();
 
         requiredRows = customers.filter((row) => row[column] === value);
-        console.log("inside filter");
-        console.log("prev current:", currentData.length);
-        console.log(requiredRows);
+        // console.log("inside filter");
+        // console.log("prev current:", currentData.length);
+        // console.log(requiredRows);
 
         setcurrentData(...requiredRows);
-        console.log("updated current:", currentData.length);
+        // console.log("updated current:", currentData.length);
       }
     }
   };

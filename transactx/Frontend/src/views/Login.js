@@ -85,7 +85,7 @@ const Login = () => {
     <>
       <main className="login-container">   
         <div className='form-container'>
-          
+        {from && <div className="login-error">You must log in first!</div>}
           <form className="form" onSubmit={handleSubmit} autoComplete="new-password">
             <div className='form-title'>
               TransactX Login

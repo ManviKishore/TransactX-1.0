@@ -7,7 +7,7 @@ function ViewCustomers({ customers }) {
   if (Array.isArray(customers)) {
     tempCustomers = customers.slice(0, itemsPerPage);
   }
-  console.log(tempCustomers);
+  // console.log(tempCustomers);
   const [visibleCustomers, setVisibleCustomers] = useState(tempCustomers);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ function ViewCustomers({ customers }) {
     //  tempCustomers = customers;
   }, [customers]);
 
-  console.log("I'm heressss : ", visibleCustomers);
+  // console.log("I'm heressss : ", visibleCustomers);
   // if (customers.length > 0) setVisibleCustomers(...customers);
 
   const [currentPage, setCurrentPage] = useState(1);

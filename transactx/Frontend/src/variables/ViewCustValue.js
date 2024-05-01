@@ -9,7 +9,7 @@ const ViewCustValue = ({ custLifeVal }) => {
         <thead className="text-primary">
         
           <tr className="text-center">
-            <th>Customer Value</th>
+            <th>Number</th>
             <th>Age Group</th>
           </tr>
         </thead>

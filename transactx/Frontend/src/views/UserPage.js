@@ -35,6 +35,7 @@ import UserContext from "views/Auth/UseContext";
 
 // core components
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
+import { Typography } from "@mui/material";
 
 function User() {
   const { user, role } = useContext(UserContext);
@@ -45,12 +46,14 @@ function User() {
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [account, setAccount] = useState("ACC0000002");
+  const [successMessage, setSuccessMessage] = useState(null);
   const updateUser = async (data) => {
     console.log(data);
     axios
       .post("http://localhost:4000/userprofile", data)
       .then((response) => {
         console.log("Response:", response.data);
+        setSuccessMessage("Profile updated successfully!");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -62,46 +65,12 @@ function User() {
     event.preventDefault(); // Prevent the default form submission behavior
     const formData = new FormData(event.target); // Create a new FormData object with form data
     const data = Object.fromEntries(formData.entries());
-    // Convert FormData to plain object
-    // if (data.changedusername == "") {
-    //   newUsername = user;
-    // }
-    // const reqPass = data.changedpassword;
-    // if (data.changedpassword == "") {
-    //   reqPass = newPassword;
-    // }
-    // var updateData = {
-    //   username: user,
-    //   changedusername: newUsername,
-    //   changedpassword: reqPass,
-    // };
+    
     updateUser(data);
 
     // if (data.username != n) console.log("Form data:", data); // Log the form data
   };
-  // const getUserDetails = async (uname) => {
-  //   console.log(uname);
-  //   const data = {
-  //     username: uname,
-  //   };
-  //   console.log(data);
-  //   axios
-  //     .post("http://localhost:4000/userdetails", data)
-  //     .then((response) => {
-  //       console.log("Response:", response.data.results);
-  //       const extracted_res = response.data.results;
-  //       setNewPassword(extracted_res[0].Password);
-
-  //       console.log(newPassword);
-  //       setNewUsername(...uname);
-  //       setAccount(extracted_res[0].AccountNumber);
-  //       console.log("password :", extracted_res[0].AccountNumber);
-  //       console.log("account :", account);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // };
+ 
   return (
     <>
       <PanelHeader size="sm" />
@@ -170,6 +139,14 @@ function User() {
                   </Row>
                   <Button type="submit">Submit</Button>
                 </Form>
+                <Typography
+                  variant="body2"
+                  className="success-message"
+                  style={{ color: "green", marginTop: "10px" }}
+                >
+                  {successMessage}
+                </Typography>
+                
               </CardBody>
             </Card>
           </Col>
