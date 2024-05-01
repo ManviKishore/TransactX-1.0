@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../assets/css/Login.css';
 import UserContext from './Auth/UseContext';
-// import { Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 const Login = () => {
     
@@ -19,6 +19,7 @@ const Login = () => {
   const [successMessage, setSuccessMessage] = useState(null);
 
   const [stayLoggedIn, setStayLoggedIn] = useState(false);
+
 
   //Handling form validation
   const [errors, setErrors] = useState({});
@@ -50,32 +51,20 @@ const Login = () => {
         const token = responseData.token;
         console.log(responseData.response);
         localStorage.setItem('token', token); 
-        // console.log(responseData.response.isAdmin);
-
-
-        const role = responseData.response.isAdmin ? 'admin' : 'user';
-        // console.log(role);
-        // setUser(data.username, stayLoggedIn);
-        //setUser(data.username.charAt(0).toUpperCase() + data.username.slice(1), stayLoggedIn);
         
+        const role = responseData.response.isAdmin ? 'admin' : 'user';
+
         updateUserAndRole(data.username, role);
 
-
-        // setUser({
-        //   username: data.username.charAt(0).toUpperCase() + data.username.slice(1),
-        //   role: role
-        // }, stayLoggedIn);
-
-        // sessionStorage.setItem('role', role);
-
         setSuccessMessage("Logged in successfully!");
+        
         console.log(role);
         setData({
           username: '',
           password: '',
         });
         
-        const targetPath = role === 'admin' ? '/admin/dashboard' : '/user';
+        const targetPath = role === 'admin' ? '/admin/dashboard' : '/user/dashboard';
         setTimeout(() => {
           // navigate(from?.pathname || "/home", { replace: true });
           navigate(targetPath, { replace: true });
@@ -148,9 +137,9 @@ const Login = () => {
                 </button>
               </div>
             </form>
-            {/* <Typography variant="body2" className="success-message" style={{ color: 'green', marginTop: '10px' }}>
+            <Typography variant="body2" className="success-message" style={{ color: 'green', marginTop: '10px' }}>
               {successMessage}
-            </Typography> */}
+            </Typography>
             
           </div>
         </main> 

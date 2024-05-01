@@ -156,11 +156,11 @@ function UserDashboard() {
     getAccountStatus();
   }, [5000]);
 
-  const [dueDate, setDueDate] = useState([]);
+  const [dueAmount, setDueAmount] = useState([]);
   const [paymentDueDate, setPaymentDueDate] = useState([]);
 
   useEffect(() => {
-    const getDueDate = async () => {
+    const getDueDets = async () => {
       try {
 
         const userObject = { username: user.replace(/"/g, '') };
@@ -172,15 +172,18 @@ function UserDashboard() {
           body: JSON.stringify(userObject),
         });
         const responseData = await response.json();
-        setDueDate(responseData.results[0]);
+        
+        setDueAmount(responseData.results[0].amount);
         const dueOn = new Date(responseData.results[0].duedate).toISOString().split('T')[0];
         setPaymentDueDate(dueOn);
+        
 
       } catch (error) {
         console.error('Error:', error);
       }
     }
-    getDueDate();
+    getDueDets();
+    // console.log(dueAmount, paymentDueDate);
   }, [5000]);
 
   const [userLatePayment, setUserLatePayment] = useState([]);
@@ -398,7 +401,7 @@ function UserDashboard() {
 
                         </td>
                         <td className="text-left">
-                          Account Number: {accountDets.accountNumber}
+                          Account Number: {accountDets && accountDets.accountNumber}
                         </td>
                         <td className="td-actions text-right">
                           <Button
@@ -422,7 +425,7 @@ function UserDashboard() {
                         <td>
 
                         </td>
-                        <td className="text-left">Total Expenditure: ${accountDets.total_exprenditure} </td>
+                        <td className="text-left">Total Expenditure: ${accountDets && accountDets.total_exprenditure} </td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -445,7 +448,7 @@ function UserDashboard() {
                         <td>
                          
                         </td>
-                        <td className="text-left">Cards on Account: {accountDets.Masked_cred_num}</td>
+                        <td className="text-left">Cards on Account: {accountDets && accountDets.Masked_cred_num}</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -468,7 +471,7 @@ function UserDashboard() {
                         <td>
                         
                         </td>
-                        <td className="text-left">Recent Transaction Date: {accountDets.most_recent_transaction}</td>
+                        <td className="text-left">Recent Transaction Date: {accountDets && accountDets.most_recent_transaction}</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -492,7 +495,7 @@ function UserDashboard() {
                         <td>
                         
                         </td>
-                        <td className="text-left">Number of Transactions: {accountDets.number_of_total_transactions}</td>
+                        <td className="text-left">Number of Transactions: {accountDets && accountDets.number_of_total_transactions}</td>
                         <td className="td-actions text-right">
                           <Button
                             className="btn-round btn-icon btn-icon-mini btn-neutral"
@@ -517,7 +520,7 @@ function UserDashboard() {
 
                         </td>
                         <td className="text-left">
-                          Upcoming Payment: ${dueDate.amount} Due: {paymentDueDate}  
+                          Upcoming Payment: ${dueAmount && dueAmount} Due: {paymentDueDate && paymentDueDate}  
                         </td>
                         <td className="td-actions text-right">
                           <Button

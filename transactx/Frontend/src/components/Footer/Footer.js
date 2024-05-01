@@ -29,7 +29,7 @@ function Footer(props) {
           <ul>
             <li>
               <a
-                href="https://presentation.creative-tim.com?ref=nudr-footer"
+                href=""
                 target="_blank">
                 Contact Us
               </a>

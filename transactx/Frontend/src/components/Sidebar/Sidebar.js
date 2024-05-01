@@ -17,7 +17,7 @@
 */
 /*eslint-disable*/
 import React, { useContext } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
@@ -54,9 +54,11 @@ function Sidebar(props) {
   // console.log(myRole);
   //useContext to logout user
   const { logout } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
       logout();
+      // navigate('/');
    };
 
   return (
@@ -67,9 +69,7 @@ function Sidebar(props) {
           className="simple-text logo-mini"
           target="_blank"
         >
-          {/* <div className="logo-img">
-            <img src={logo} alt="react-logo" />
-          </div> */}
+
         </a>
         <a
           href=""
@@ -116,11 +116,10 @@ function Sidebar(props) {
           <NavLink to="" className="nav-link" >
                 <i className="now-ui-icons users_single-02" />
                 <p>{user}</p>
-                {/* <p>{role}</p> */}
               </NavLink>
               
           )}
-            <NavLink to="/login" className="nav-link" onClick={handleLogout}>
+            <NavLink to="/" className="nav-link" onClick={handleLogout}>
               <i className="now-ui-icons objects_key-25" />
               <p>logout</p>
             </NavLink>
