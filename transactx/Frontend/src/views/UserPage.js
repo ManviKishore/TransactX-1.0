@@ -15,7 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState, useContext } from "react";
+import axios from "axios";
 
 // reactstrap components
 import {
@@ -30,15 +31,32 @@ import {
   Col,
 } from "reactstrap";
 import image_profile from "../assets/img/bg5.jpg";
+import UserContext from "views/Auth/UseContext";
+
 // core components
 import PanelHeader from "components/PanelHeader/PanelHeader.js";
 
 function User() {
+  const { user, role } = useContext(UserContext);
+
+  const [showUsernameField, setShowUsernameField] = useState(false);
+  const [showPasswordField, setShowPasswordField] = useState(false);
+
+  const updateUser = async (data) => {
+    axios
+      .post("http://localhost:4000/userprofile", data)
+      .then((response) => {
+        console.log("Response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
     const formData = new FormData(event.target); // Create a new FormData object with form data
     const data = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-
+    updateUser(data);
     console.log("Form data:", data); // Log the form data
   };
   return (
@@ -55,51 +73,56 @@ function User() {
                 <Form onSubmit={handleSubmit}>
                   <Row>
                     <Col className="pr-1" md="6">
-                      <FormGroup>
-                        <label>First Name</label>
+                      <FormGroup style={{ border: "0rem" }}>
+                        <label>Username</label>
                         <Input
-                          defaultValue="Mike"
-                          placeholder="First Name"
+                          defaultValue={user}
+                          placeholder="Username"
                           type="text"
-                          name="firstName"
+                          name="username"
+                          readonly
                         />
                       </FormGroup>
                     </Col>
-                    <Col className="pl-1" md="6">
-                      <FormGroup>
-                        <label>Last Name</label>
+                    <Col className="pr-1" md="6">
+                      <FormGroup style={{ border: "0rem" }}>
+                        <label>Primary AccountNo</label>
                         <Input
-                          defaultValue="Andrew"
-                          placeholder="Last Name"
+                          defaultValue="ACC0000002"
+                          placeholder="text"
                           type="text"
-                          name="lastName"
+                          readonly
                         />
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <Col className="pr-1" md="6">
-                      <FormGroup>
-                        <label>Username</label>
-                        <Input
-                          defaultValue="michael23"
-                          placeholder="Username"
-                          type="text"
-                          name="username"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <FormGroup>
-                        <label>Password</label>
-                        <Input
-                          defaultValue="Andrew"
-                          placeholder="Password"
-                          type="password"
-                          name="password"
-                        />
-                      </FormGroup>
-                    </Col>
+                    {showUsernameField && (
+                      <Col className="pr-1" md="6" style={{ border: "0rem" }}>
+                        <FormGroup style={{ border: "0rem" }}>
+                          <label>Update Username</label>
+                          <Input
+                            placeholder="New Username"
+                            type="text"
+                            name="changedusername"
+                          />
+                        </FormGroup>
+                      </Col>
+                      // </Row>
+                    )}
+                    {showPasswordField && (
+                      // <Row>
+                      <Col className="pr-1" md="6">
+                        <FormGroup style={{ border: "0rem" }}>
+                          <label>Update Password</label>
+                          <Input
+                            placeholder="New Password"
+                            type="password"
+                            name="changedpassword"
+                          />
+                        </FormGroup>
+                      </Col>
+                    )}
                   </Row>
                   <Button type="submit">Submit</Button>
                 </Form>
@@ -119,13 +142,31 @@ function User() {
                       className="avatar border-gray"
                       src={image_profile}
                     />
-                    <h5 className="title">Mike Andrew</h5>
+                    <h5 className="title">{user}</h5>
                   </a>
-                  <p className="description">michael24</p>
                 </div>
                 <p className="description text-center">
-                  Welcome, Mike. We are here to assist you. <br />
+                  Welcome, {user}. We are here to assist you. <br />
                 </p>
+                <div className="text-center">
+                  <Button
+                    color="primary"
+                    onClick={() => setShowUsernameField(!showUsernameField)}
+                    style={{}}
+                  >
+                    {showUsernameField
+                      ? "Hide Username Field"
+                      : "Update Username"}
+                  </Button>{" "}
+                  <Button
+                    color="primary"
+                    onClick={() => setShowPasswordField(!showPasswordField)}
+                  >
+                    {showPasswordField
+                      ? "Hide Password Field"
+                      : "Update Password"}
+                  </Button>
+                </div>
               </CardBody>
               <hr />
             </Card>

@@ -14,7 +14,7 @@ function ViewPerson({ persons }) {
 
   useEffect(() => {
     setVisiblePersons(tempPersons);
-    tempPersons = persons;
+    // tempPersons = persons;
   }, [persons]);
 
   console.log("I'm heressss : ", visiblePersons);

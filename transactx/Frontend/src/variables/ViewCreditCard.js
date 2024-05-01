@@ -13,7 +13,7 @@ function ViewCreditCard({ creditCards }) {
 
   useEffect(() => {
     setVisibleCreditCards(tempCreditCards);
-    tempCreditCards = creditCards;
+    // tempCreditCards = creditCards;
   }, [creditCards]);
 
   console.log("I'm heressss : ", visibleCreditCards);

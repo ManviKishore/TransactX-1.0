@@ -66,6 +66,7 @@ function RegularTables() {
         ssn: inputssn,
       },
     };
+    tableops(row);
 
     console.log(row);
   };
@@ -85,7 +86,7 @@ function RegularTables() {
       console.error("Error:", error);
     }
   };
-  const saveRows = async (rowData) => {
+  const tableops = async (rowData) => {
     axios
       .post("http://localhost:4000/tableops", rowData)
       .then((response) => {
@@ -135,7 +136,8 @@ function RegularTables() {
       Operation: "Add",
       data,
     };
-    saveRows(row);
+    tableops(row);
+    console.log(row);
     reset();
   };
 

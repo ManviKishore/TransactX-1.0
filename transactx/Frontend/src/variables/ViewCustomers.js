@@ -13,7 +13,7 @@ function ViewCustomers({ customers }) {
   useEffect(() => {
     //setAllCustomer(customers);
     setVisibleCustomers(tempCustomers);
-    tempCustomers = customers;
+    //  tempCustomers = customers;
   }, [customers]);
 
   console.log("I'm heressss : ", visibleCustomers);
