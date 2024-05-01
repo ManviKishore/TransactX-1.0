@@ -41,6 +41,9 @@ function User() {
 
   const [showUsernameField, setShowUsernameField] = useState(false);
   const [showPasswordField, setShowPasswordField] = useState(false);
+  const [existingDetails, setExistingDetails] = useState();
+  const [newUsername, setNewUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const updateUser = async (data) => {
     axios
@@ -55,9 +58,28 @@ function User() {
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
     const formData = new FormData(event.target); // Create a new FormData object with form data
-    const data = Object.fromEntries(formData.entries()); // Convert FormData to plain object
-    updateUser(data);
-    console.log("Form data:", data); // Log the form data
+    const data = Object.fromEntries(formData.entries());
+    // Convert FormData to plain object
+    var updateData = {
+      username: data.username,
+      changedusername: newUsername,
+      changedpassword: newPassword,
+    };
+    updateUser(updateData);
+
+    if (data.username != n) console.log("Form data:", data); // Log the form data
+  };
+  const getUserDetails = async (username) => {
+    axios
+      .post("http://localhost:4000/tableops", username)
+      .then((response) => {
+        console.log("Response:", response.data);
+        setNewPassword(response.password);
+        setNewUsername(response.username);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
   return (
     <>
@@ -105,6 +127,9 @@ function User() {
                             placeholder="New Username"
                             type="text"
                             name="changedusername"
+                            onChange={(event) => {
+                              setNewUsername(event.target.value);
+                            }}
                           />
                         </FormGroup>
                       </Col>
@@ -119,6 +144,9 @@ function User() {
                             placeholder="New Password"
                             type="password"
                             name="changedpassword"
+                            onChange={(event) => {
+                              setNewPassword(event.target.value);
+                            }}
                           />
                         </FormGroup>
                       </Col>
