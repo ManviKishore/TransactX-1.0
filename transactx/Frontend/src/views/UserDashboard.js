@@ -520,7 +520,9 @@ function UserDashboard() {
 
                         </td>
                         <td className="text-left">
-                          Upcoming Payment: ${dueAmount && dueAmount} Due: {paymentDueDate && paymentDueDate}  
+                        {dueAmount && paymentDueDate > 0 ? 
+                          `Upcoming Payment: $${dueAmount} Due: ${paymentDueDate && paymentDueDate}` 
+                          : "No payments due at the moment"}
                         </td>
                         <td className="td-actions text-right">
                           <Button
